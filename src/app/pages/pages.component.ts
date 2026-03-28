@@ -1,27 +1,19 @@
 import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
-
 import { RouterOutlet } from '@angular/router';
-import { AppComponent } from '../app.component';
+
 import { AuthService } from '../auth';
-import { MenuService } from '../layout';
-import { ConfigComponent } from '../layout/config/config.component';
+import { AppComponent } from '../app.component';
+import { MenuService, TopBarComponent } from '../layout';
 import { MenuComponent } from '../layout/menu/menu.component';
+import { ConfigComponent } from '../layout/config/config.component';
 import { RightpanelComponent } from '../layout/rightpanel/rightpanel.component';
-import { TopBarComponent } from '../layout/topbar/topBar.component';
 
 @Component({
-    selector: 'app-pages',
-    templateUrl: './pages.component.html',
-    standalone: true,
-    imports: [
-        NgClass,
-        TopBarComponent,
-        RouterOutlet,
-        ConfigComponent,
-        RightpanelComponent,
-        MenuComponent,
-    ],
+  selector: 'app-pages',
+  templateUrl: './pages.component.html',
+  standalone: true,
+  imports: [NgClass, RouterOutlet, MenuComponent, TopBarComponent, ConfigComponent, RightpanelComponent],
 })
 export class PagesComponent {
   activeTopBarItem: any;
@@ -41,7 +33,11 @@ export class PagesComponent {
   staticMenuMobileActive: boolean = false;
   staticMenuDesktopInactive: boolean = false;
 
-  constructor(private menuService: MenuService, public app: AppComponent, private auth: AuthService) {}
+  constructor(
+    private menuService: MenuService,
+    public app: AppComponent,
+    private auth: AuthService,
+  ) {}
 
   onLayoutClick() {
     if (!this.topBarItemClick) {

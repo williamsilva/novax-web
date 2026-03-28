@@ -7,11 +7,11 @@ import { PagesComponent } from 'src/app/pages';
 import { ChangePasswordComponent } from 'src/app/shared/components/change-password/change-password.component';
 
 @Component({
-    selector: 'app-topBar',
-    providers: [DialogService],
-    templateUrl: './topBar.component.html',
-    standalone: true,
-    imports: [NgClass],
+  selector: 'app-topBar',
+  providers: [DialogService],
+  templateUrl: './topbar.component.html',
+  standalone: true,
+  imports: [NgClass],
 })
 export class TopBarComponent {
   imageUrl: string;
@@ -20,7 +20,7 @@ export class TopBarComponent {
   constructor(
     public auth: AuthService,
     public app: PagesComponent,
-    protected dialogServiceChangePassword: DialogService
+    protected dialogServiceChangePassword: DialogService,
   ) {
     this.imageUrl = 'assets/layout/images/avatar.png';
   }
