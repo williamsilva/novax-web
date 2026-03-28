@@ -1,0 +1,39 @@
+<div
+  class="layout-wrapper"
+  [ngClass]="{
+    'layout-horizontal': app.menuMode === 'horizontal',
+    'layout-static': app.menuMode === 'static',
+    'layout-slim': app.menuMode === 'slim',
+    'layout-slim-active': slimMenuActive && app.menuMode === 'slim',
+    'layout-slim-anchored': slimMenuAnchor,
+    'layout-slim-restore': app.menuMode !== 'slim' && slimMenuAnchor,
+    'layout-toggle': app.menuMode === 'toggle',
+    'layout-toggle-active': toggleMenuActive,
+    'layout-overlay': app.menuMode === 'overlay',
+    'layout-overlay-active': overlayMenuActive,
+    'layout-light': app.lightMenu === true,
+    'layout-mobile-active': staticMenuMobileActive,
+    'layout-static-inactive': staticMenuDesktopInactive,
+    'p-input-filled': app.inputStyle === 'filled',
+    'p-ripple-disabled': !app.ripple
+  }"
+  (click)="onLayoutClick()"
+>
+  <div class="layout-main">
+    <app-topBar></app-topBar>
+
+    <div class="layout-content">
+      <router-outlet></router-outlet>
+    </div>
+
+    <!-- <app-footer></app-footer> -->
+
+    <div class="layout-main-mask"></div>
+  </div>
+
+  <app-config></app-config>
+
+  <app-rightpanel></app-rightpanel>
+
+  <app-menu></app-menu>
+</div>

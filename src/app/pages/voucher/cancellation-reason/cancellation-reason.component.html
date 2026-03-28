@@ -1,0 +1,47 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12" formGroupName="cancellationReason">
+      <app-error-msg [control]="cancellationReasonId" label="Motivo"></app-error-msg>
+      <p-dropdown
+        id="promoter"
+        [filter]="true"
+        [options]="reasons"
+        formControlName="id"
+        optionDisabled="inactive"
+        [autoDisplayFirst]="false"
+        [class.ng-dirty]="error.hasControlErrors(cancellationReasonId)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-3 col-offset-6">
+      <button
+        pButton
+        type="submit"
+        label="Confirmar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+      ></button>
+    </div>
+
+    <div class="col-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

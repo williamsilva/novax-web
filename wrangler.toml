@@ -1,0 +1,10 @@
+name = "novax"
+compatibility_date = "2026-03-28"
+pages_build_output_dir = "dist"
+
+[vars]
+# Ajuste estes valores no painel do Cloudflare Pages > Settings > Environment variables
+# OAUTH_TOKEN_URL = "https://api.acquamania.com.br/oauth2/token"
+# OAUTH_REVOKE_URL = "https://api.acquamania.com.br/oauth2/revoke"
+# OAUTH_CLIENT_ID = "novax@angular"
+# OAUTH_CLIENT_SECRET = "..."

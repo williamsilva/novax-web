@@ -1,0 +1,318 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    [lazy]="true"
+    dataKey="uuid"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    [(first)]="firstRecords"
+    [metaKeySelection]="true"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    (onRowSelect)="onRowSelect($event)"
+    [exportHeader]="'customExportHeader'"
+    [(selection)]="selectionMultipleTable"
+    (onRowUnselect)="onRowUnselect($event)"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Inserir"
+          (click)="openNew()"
+          icon="pi pi-plus-circle"
+          [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_CONSULT])"
+        ></button>
+
+        <i style="padding: 0.7rem 0 0 0.5em" class="pi pi-bars"></i>
+
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Trocar"
+          style="margin: 0 0.5em"
+          tooltipPosition="bottom"
+          icon="pi pi-check-circle"
+          class="p-button-success p-mr-4"
+          (click)="openDialogExchanged()"
+          [disabled]="
+            disabledPending ||
+            !selectionMultipleTable ||
+            !selectionMultipleTable.length ||
+            !auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_EXCHANGE])
+          "
+        ></button>
+
+        <span class="p-input-icon-left ml-auto">
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="XLS"
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            tooltipPosition="bottom"
+            class="p-button-success mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="PDF"
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            tooltipPosition="bottom"
+            class="p-button-warning mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-filter"
+            tooltipPosition="bottom"
+            pTooltip="Selection Only"
+            class="p-button-info ml-auto mr-8"
+            (click)="exportExcelSelectionOnly()"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Clear"
+            (click)="clear(table)"
+            icon="pi pi-filter-slash"
+            class="p-button-outlined ml-auto"
+          ></button>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem"></th>
+
+        <th pSortableColumn="client" style="width: 11rem">
+          <div class="flex p-jc-between p-ai-center">
+            Cliente
+            <p-sortIcon field="client"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="client"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="authorizedBy">
+          <div class="flex p-jc-between p-ai-center">
+            Autorizado por
+            <p-sortIcon field="authorizedBy"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="authorizedBy"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="removedBy">
+          <div class="flex p-jc-between p-ai-center">
+            Retirada por
+            <p-sortIcon field="removedBy"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="removedBy"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="document" style="width: 11rem">
+          <div class="flex p-jc-between p-ai-center">
+            Documento
+            <p-sortIcon field="document"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="document"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="scheduledVisitDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Data
+            <p-sortIcon field="scheduledVisitDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+              field="scheduledVisitDate"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="actualVisitDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Visita
+            <p-sortIcon field="actualVisitDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              field="actualVisitDate"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 10rem" pSortableColumn="status">
+          <div class="flex p-jc-between p-ai-center">
+            Status
+            <p-sortIcon field="status"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              field="status"
+              class="ml-auto"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="statusCourtesyEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="
+                        'customer-badge status-' + hasClassStyle.courtesy(keyValueStatusCourtesy.getValue(option.value))
+                      "
+                      >{{ option.label }}</span
+                    >
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 5.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td>
+          <p-tableCheckbox [value]="entry" [disabled]="canSelect(entry) || activeByStatus(entry)"></p-tableCheckbox>
+        </td>
+
+        <td class="p-ellipsis">{{ entry.client }}</td>
+        <td class="p-ellipsis">{{ entry.authorizedBy?.name }}</td>
+        <td class="p-ellipsis">{{ entry.removedBy?.name }}</td>
+        <td>{{ entry.document | maskDocument }}</td>
+
+        <td>{{ entry.scheduledVisitDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.actualVisitDate | date : 'dd/MM/yyyy' }}</td>
+
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.courtesy(entry.status)">{{
+            setDescription.courtesy(entry.status)
+          }}</span>
+        </td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Ativar"
+            tooltipPosition="top"
+            (click)="activeHandler(entry.uuid)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+            [hidden]="
+              entry.status === getValueStatusCourtesy(StatusCourtesyEnum.Pending) ||
+              entry.status === getValueStatusCourtesy(StatusCourtesyEnum.Exchanged)
+            "
+          >
+            <i class="pi pi-check-circle"></i>
+          </a>
+
+          <a
+            pTooltip="Cancelar"
+            tooltipPosition="top"
+            (click)="deactivateHandler(entry.uuid)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+            [hidden]="
+              entry.status === getValueStatusCourtesy(StatusCourtesyEnum.Exchanged) ||
+              entry.status === getValueStatusCourtesy(StatusCourtesyEnum.Canceled)
+            "
+          >
+            <i class="pi pi-shield"></i>
+          </a>
+
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_CHANGE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.uuid)"
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

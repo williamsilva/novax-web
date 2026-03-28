@@ -1,0 +1,127 @@
+<a
+  style="cursor: pointer"
+  id="layout-config-button"
+  class="layout-config-button"
+  (click)="onConfigButtonClick($event)"
+  >
+  <i class="pi pi-cog"></i>
+</a>
+
+<div
+  class="layout-config"
+  (click)="appMain.onConfigClick($event)"
+  [ngClass]="{ 'layout-config-active': appMain.configActive }"
+  >
+  <h5>Menu Type</h5>
+  <div class="field-radiobutton">
+    <p-radioButton
+      name="menuMode"
+      value="static"
+      inputId="mode1"
+      [(ngModel)]="app.menuMode"
+    ></p-radioButton>
+    <label for="mode1">Static</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      name="menuMode"
+      value="overlay"
+      inputId="mode2"
+      [(ngModel)]="app.menuMode"
+    ></p-radioButton>
+    <label for="mode2">Overlay</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      name="menuMode"
+      inputId="mode3"
+      value="horizontal"
+      [(ngModel)]="app.menuMode"
+    ></p-radioButton>
+    <label for="mode3">Horizontal</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      value="slim"
+      name="menuMode"
+      inputId="mode4"
+      [(ngModel)]="app.menuMode"
+    ></p-radioButton>
+    <label for="mode4">Slim</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      name="menuMode"
+      value="toggle"
+      inputId="mode5"
+      [(ngModel)]="app.menuMode"
+    ></p-radioButton>
+    <label for="mode5">Toggle</label>
+  </div>
+
+  <h5>Menu Color</h5>
+  <div class="field-radiobutton">
+    <p-radioButton
+      [value]="true"
+      name="lightMenu"
+      inputId="lightMenu1"
+      [(ngModel)]="app.lightMenu"
+    ></p-radioButton>
+    <label for="lightMenu1">Light</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      name="lightMenu"
+      [value]="false"
+      inputId="lightMenu2"
+      [(ngModel)]="app.lightMenu"
+    ></p-radioButton>
+    <label for="lightMenu2">Dark</label>
+  </div>
+
+  <h5>Input Style</h5>
+  <div class="field-radiobutton">
+    <p-radioButton
+      value="outlined"
+      name="inputStyle"
+      inputId="inputStyle1"
+      [(ngModel)]="app.inputStyle"
+    ></p-radioButton>
+    <label for="inputStyle1">Outlined</label>
+  </div>
+
+  <div class="field-radiobutton">
+    <p-radioButton
+      value="filled"
+      name="inputStyle"
+      inputId="inputStyle2"
+      [(ngModel)]="app.inputStyle"
+    ></p-radioButton>
+    <label for="inputStyle2">Filled</label>
+  </div>
+
+  <h5>Ripple Effect</h5>
+  <p-inputSwitch
+    [ngModel]="app.ripple"
+    (onChange)="appMain.onRippleChange($event)"
+  ></p-inputSwitch>
+
+  <h5>Component Themes</h5>
+  <div class="layout-themes">
+    @for (t of themes; track t) {
+      <div>
+        <a
+          style="cursor: pointer"
+          (click)="changeTheme(t.name)"
+          [ngStyle]="{ 'background-color': t.color }"
+          >
+        </a>
+      </div>
+    }
+  </div>
+</div>

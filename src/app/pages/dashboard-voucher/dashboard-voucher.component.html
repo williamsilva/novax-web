@@ -1,0 +1,147 @@
+<div [class]="!auth.hasAnyPermission([wsPermissions.ROLE_VIEW_DASHBOARD_VOUCHER]) ? 'hidden' : ''">
+  <form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+    <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+      <div class="col-3">
+        <p-calendar
+          pRipple
+          name="period"
+          appendTo="body"
+          [inline]="false"
+          [showIcon]="true"
+          dateFormat="dd/mm/yy"
+          class="p-calendar-sm"
+          selectionMode="range"
+          [showButtonBar]="true"
+          [yearNavigator]="true"
+          [readonlyInput]="true"
+          [monthNavigator]="true"
+          formControlName="period"
+          [selectOtherMonths]="true"
+        >
+        </p-calendar>
+      </div>
+
+      <div class="col-2">
+        <button
+          pRipple
+          pButton
+          type="submit"
+          label="Pesquisar"
+          [loading]="loading"
+          class="ui-button-success"
+          style="display: inline-block"
+        ></button>
+      </div>
+
+      <div class="col-2">
+        <button
+          pButton
+          type="button"
+          label="Limpar"
+          (click)="reset()"
+          class="p-button-secondary"
+          style="display: inline-block"
+        ></button>
+      </div>
+    </div>
+  </form>
+
+  <div class="grid dashboard">
+    <div class="col-12 lg:col-6 xl:col-3">
+      <div class="overview-box overview-box-1">
+        <div class="overview-box-icon">
+          <i class="pi pi-user"></i>
+        </div>
+        <div class="overview-box-content">
+          <div class="overview-box-title">Total Clientes</div>
+          <div class="overview-box-stats">{{ vouchersTotalDTO.client }}</div>
+          <div class="overview-box-details">
+            Média de {{ validNaN(vouchersTotalDTO.totalPrice / vouchersTotalDTO.client) | currency : 'BRL' }} por
+            clientes
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-6 xl:col-3">
+      <div class="overview-box overview-box-2">
+        <div class="overview-box-icon">
+          <i class="pi pi-map-marker"></i>
+        </div>
+        <div class="overview-box-content">
+          <div class="overview-box-title">Valor total</div>
+          <div class="overview-box-stats">{{ validNaN(vouchersTotalDTO.totalPrice) | currency : 'BRL' }}</div>
+          <div class="overview-box-details">Total Vouchers. {{ vouchersTotalDTO.quantity }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-6 xl:col-3">
+      <div class="overview-box overview-box-3">
+        <div class="overview-box-icon">
+          <i class="pi pi-folder"></i>
+        </div>
+        <div class="overview-box-content">
+          <div class="overview-box-title">Valor Ingressos</div>
+          <div class="overview-box-stats">{{ validNaN(vouchersTotalDTO.totalPriceTickets) | currency : 'BRL' }}</div>
+          <div class="overview-box-details">
+            {{ validNaN(vouchersTotalDTO.totalPriceTickets / vouchersTotalDTO.totalPrice) | percent : '1.2' }} do valor
+            total
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-6 xl:col-3">
+      <div class="overview-box overview-box-4">
+        <div class="overview-box-icon">
+          <i class="pi pi-inbox"></i>
+        </div>
+        <div class="overview-box-content">
+          <div class="overview-box-title">Valor Alimentação</div>
+          <div class="overview-box-stats">{{ validNaN(vouchersTotalDTO.totalPriceFoods) | currency : 'BRL' }}</div>
+          <div class="overview-box-details">
+            {{ validNaN(vouchersTotalDTO.totalPriceFoods / vouchersTotalDTO.totalPrice) | percent : '1.2' }} do valor
+            total
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-12 lg:col-6 global-sales">
+      <p-panel header="Top Clientes">
+        <p-table [value]="topClients">
+          <ng-template pTemplate="header">
+            <tr>
+              <th>Codigo</th>
+              <th>Cliente</th>
+              <th>N° de Visitas</th>
+              <th>Valor Total</th>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="body" let-topClients>
+            <tr>
+              <td>{{ topClients.client }}</td>
+              <td>{{ topClients.name }}</td>
+              <td style="text-align: center">{{ topClients.numberOfVisit }}</td>
+              <td>{{ topClients.totalPrice | currency : 'BRL' }}</td>
+            </tr>
+          </ng-template>
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="10">Não há dados para ser exibido!</td>
+            </tr>
+          </ng-template>
+        </p-table>
+      </p-panel>
+    </div>
+
+    <div class="col-12 lg:col-6 stats">
+      <p-panel header="Vouchers">
+        <p-chart type="pie" [data]="data" [options]="options" width="310"></p-chart>
+      </p-panel>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,171 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Dados Voucher" leftIcon="pi pi-home">
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-3">
+          <app-error-msg [control]="typePerson" label="Pessoa"></app-error-msg>
+          <p-dropdown
+            inputId="dropdown"
+            placeholder="Selecione"
+            [options]="typePersonEnum"
+            formControlName="typePerson"
+            (onChange)="onChangeTypePerson($event)"
+            [class.ng-dirty]="error.hasControlErrors(typePerson)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-5" formGroupName="client">
+          <app-error-msg [control]="documentClient" [label]="labelDocument"></app-error-msg>
+          <input pInputText type="text" [mask]="mask" (blur)="findByDocument()" formControlName="document" />
+        </div>
+
+        <div class="col-4">
+          <app-error-msg [control]="visitDate" label="Data Visita"></app-error-msg>
+          <p-calendar
+            appendTo="body"
+            [inline]="false"
+            name="visitDate"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            [selectOtherMonths]="true"
+            formControlName="visitDate"
+            [class.ng-dirty]="error.hasControlErrors(visitDate)"
+          >
+          </p-calendar>
+        </div>
+      </div>
+
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-3">
+          <app-error-msg [control]="advanceValue" [required]="false" label="Deposito"></app-error-msg>
+          <p-inputNumber
+            locale="pt-BR"
+            currency="BRL"
+            mode="currency"
+            class="ng-invalid"
+            placeholder="E.g.: 20,00"
+            formControlName="advanceValue"
+            [class.ng-dirty]="error.hasControlErrors(advanceValue)"
+          ></p-inputNumber>
+        </div>
+
+        <div class="col-5" formGroupName="promoter">
+          <app-error-msg [control]="promoterId" label="Promotor"></app-error-msg>
+          <p-dropdown
+            [filter]="true"
+            filterBy="name"
+            optionValue="id"
+            optionLabel="name"
+            formControlName="id"
+            [options]="promoters"
+            optionDisabled="inactive"
+            [autoDisplayFirst]="false"
+            [resetFilterOnHide]="true"
+            [class.ng-dirty]="error.hasControlErrors(promoterId)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-4" formGroupName="tourGuide">
+          <app-error-msg [control]="tourGuideId" [required]="false" label="Guia Turístico"></app-error-msg>
+          <p-dropdown
+            [filter]="true"
+            filterBy="name"
+            optionValue="id"
+            optionLabel="name"
+            formControlName="id"
+            [options]="tourGuides"
+            optionDisabled="inactive"
+            [autoDisplayFirst]="false"
+            [resetFilterOnHide]="true"
+            [class.ng-dirty]="error.hasControlErrors(tourGuideId)"
+          >
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-3">
+          <app-error-msg [control]="voucher" [required]="false" label="Voucher"></app-error-msg>
+          <input type="text" pInputText formControlName="voucher" readonly />
+        </div>
+
+        <div class="col-3">
+          <app-error-msg [control]="status" [required]="false" label="Status Voucher"></app-error-msg>
+          <p-dropdown
+            [readonly]="true"
+            inputId="dropdown"
+            formControlName="status"
+            [options]="statusVouchers"
+            optionDisabled="inactive"
+            [autoDisplayFirst]="false"
+            [class.ng-dirty]="error.hasControlErrors(status)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-6" formGroupName="client">
+          <app-error-msg [control]="nameClient" [required]="false" label="Cliente"></app-error-msg>
+          <input pInputText type="text" formControlName="name" readonly />
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel header="Ingressos" leftIcon="pi pi-shopping-cart">
+      <app-items-voucher [tickets]="tickets.value"></app-items-voucher>
+    </p-tabPanel>
+
+    <p-tabPanel header="Alimentação" leftIcon="pi pi-shopping-cart">
+      <app-items-food [foods]="foods.value"></app-items-food>
+    </p-tabPanel>
+
+    <p-tabPanel header="Observações" leftIcon="fa fa-book">
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-12">
+          <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+          <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-3 col-offset-7">
+      <p-splitButton
+        label="Salvar"
+        (onClick)="submitForm()"
+        [model]="itemsSplitButton"
+        icon="fa fa-fw far fa-save"
+        (onDropdownClick)="setItemsSplitButton()"
+        [disabled]="
+          this.status.value === StatusVoucherEnum.Called_off ||
+          !this.auth.hasAnyPermission([wsPermissions.ROLE_VOUCHERS_CREATE])
+        "
+      >
+      </p-splitButton>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        label="Sair"
+        type="button"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

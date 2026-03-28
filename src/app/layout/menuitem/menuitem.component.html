@@ -1,0 +1,72 @@
+<ng-container>
+  @if ((!item.routerLink || item.items) && item.visible !== false) {
+    <a
+      [attr.href]="item.url"
+      (click)="itemClick($event)"
+      (mouseenter)="onMouseEnter()"
+      (keydown.enter)="itemClick($event)"
+      [ngClass]="item.class"
+      [attr.target]="item.target"
+      [attr.tabindex]="0"
+      pRipple
+      >
+      <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+      <span>{{ item.label }}</span>
+      @if (item.items) {
+        <i
+          class="pi pi-fw pi-angle-down layout-submenu-toggler"
+        ></i>
+      }
+      @if (item.badge) {
+        <span class="menuitem-badge">{{ item.badge }}</span>
+      }
+    </a>
+  }
+  @if (item.routerLink && !item.items && item.visible !== false) {
+    <a
+      (click)="itemClick($event)"
+      (mouseenter)="onMouseEnter()"
+      [routerLink]="item.routerLink"
+      routerLinkActive="active-menuitem-routerlink"
+      [ngClass]="item.class"
+      [routerLinkActiveOptions]="{ exact: !item.preventExact }"
+      [attr.target]="item.target"
+      [attr.tabindex]="0"
+      pRipple
+      >
+      <i [ngClass]="item.icon" class="layout-menuitem-icon"></i>
+      <span>{{ item.label }}</span>
+      @if (item.items) {
+        <i
+          class="pi pi-fw pi-angle-down layout-submenu-toggler"
+        ></i>
+      }
+      @if (item.badge) {
+        <span class="menuitem-badge">{{ item.badge }}</span>
+      }
+    </a>
+  }
+  @if (item.items && active && item.visible !== false) {
+    <ul
+    [@children]="
+      app.isHorizontal() && root
+        ? active
+          ? 'visible'
+          : 'hidden'
+        : active
+        ? 'visibleAnimated'
+        : 'hiddenAnimated'
+    "
+      >
+      @for (child of item.items; track child; let i = $index) {
+        <li
+          app-menuitem
+          [item]="child"
+          [index]="i"
+          [parentKey]="key"
+          [class]="child.badgeClass"
+        ></li>
+      }
+    </ul>
+  }
+</ng-container>

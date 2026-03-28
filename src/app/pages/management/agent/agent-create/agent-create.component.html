@@ -1,0 +1,317 @@
+<h5>Tipo de Agente</h5>
+<div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+  @for (typeAgent of typesAgents; track typeAgent) {
+  <div class="field-checkbox" style="margin-left: 1em">
+    <p-checkbox
+      name="typeAgent"
+      [value]="typeAgent"
+      [formControl]="agentTypes"
+      [inputId]="typeAgent.value"
+      (onChange)="onChangeCheckbox($event)"
+      [readonly]="readonlyCheckbox(typeAgent.value)"
+    ></p-checkbox>
+    <label [for]="typeAgent.value">{{ typeAgent.label }}</label>
+  </div>
+  }
+</div>
+
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Agente" style="padding: 0.5em 0 1em 0">
+      <p-tabView>
+        <p-tabPanel header="Dados">
+          <div class="p-fluid grid">
+            <div class="col-2">
+              <app-error-msg [control]="code" [required]="false" label="Código"></app-error-msg>
+              <input pInputText type="text" formControlName="code" />
+            </div>
+
+            <div class="col-3">
+              <app-error-msg [control]="typePerson" label="Pessoa"></app-error-msg>
+              <p-dropdown
+                inputId="dropdown"
+                placeholder="Selecione"
+                [options]="typePersonEnum"
+                formControlName="typePerson"
+                (onChange)="onChangeTypePerson($event)"
+                [class.ng-dirty]="error.hasControlErrors(typePerson)"
+              >
+              </p-dropdown>
+            </div>
+
+            <div class="col-7">
+              <app-error-msg [control]="name" label="Nome "></app-error-msg>
+              <input
+                pInputText
+                type="text"
+                formControlName="name"
+                (blur)="onChangeName()"
+                [class.ng-dirty]="error.hasControlErrors(name)"
+              />
+            </div>
+          </div>
+
+          <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+            <div class="col-8">
+              <app-error-msg [control]="socialReason" label="Razão Social "></app-error-msg>
+              <input
+                pInputText
+                type="text"
+                formControlName="socialReason"
+                [class.ng-dirty]="error.hasControlErrors(socialReason)"
+              />
+            </div>
+
+            <div class="col-4">
+              <app-error-msg [control]="document" [label]="labelDocument"></app-error-msg>
+              <input
+                pInputText
+                type="text"
+                [mask]="mask"
+                formControlName="document"
+                [class.ng-dirty]="error.hasControlErrors(document)"
+              />
+            </div>
+          </div>
+        </p-tabPanel>
+
+        <p-tabPanel header="Contatos" leftIcon="fa fa-phone">
+          <app-contacts [resources]="contacts.value"></app-contacts>
+        </p-tabPanel>
+
+        <p-tabPanel header="Endereços" leftIcon="fa fa-university">
+          <app-address [resources]="address.value"></app-address>
+        </p-tabPanel>
+      </p-tabView>
+    </p-tabPanel>
+
+    <p-tabPanel
+      header="Cliente"
+      [disabled]="disabledClients || !auth.hasAnyPermission([wsPermissions.ROLE_CLIENTS_CREATE])"
+    >
+      <ng-template pTemplate="content">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="rg" [required]="false" label="RG"></app-error-msg>
+            <input pInputText type="text" formControlName="rg" [class.ng-dirty]="error.hasControlErrors(rg)" />
+          </div>
+
+          <div class="col-3">
+            <app-error-msg [control]="sex" [required]="sexRequired" label="Sexo"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="sexEnum"
+              formControlName="sex"
+              placeholder="Selecione"
+              [class.ng-dirty]="error.hasControlErrors(sex)"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-3">
+            <app-error-msg [control]="civilState" [required]="civilStateRequired" label="Estado Civil"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              placeholder="Selecione"
+              [options]="civilStateEnum"
+              formControlName="civilState"
+              [class.ng-dirty]="error.hasControlErrors(civilState)"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-3">
+            <app-error-msg [control]="birthDate" [required]="false" label="Data Nascimento"></app-error-msg>
+            <p-calendar
+              appendTo="body"
+              [inline]="false"
+              name="birthDate"
+              [showIcon]="true"
+              dateFormat="dd/mm/yy"
+              class="p-calendar-sm"
+              [yearNavigator]="true"
+              [readonlyInput]="false"
+              [monthNavigator]="true"
+              [selectOtherMonths]="true"
+              formControlName="birthDate"
+              [class.ng-dirty]="error.hasControlErrors(birthDate)"
+            >
+            </p-calendar>
+          </div>
+        </div>
+
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="statusClient" [required]="statusClientRequired" label="Status"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="statusEnum"
+              placeholder="Selecione"
+              formControlName="statusClient"
+              [class.ng-dirty]="error.hasControlErrors(statusClient)"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
+
+    <p-tabPanel
+      header="Promotor"
+      [disabled]="disabledPromoters || !auth.hasAnyPermission([wsPermissions.ROLE_PROMOTERS_CREATE])"
+    >
+      <ng-template pTemplate="content">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="statusPromoter" [required]="promoterRequired" label="Status"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="statusEnum"
+              placeholder="Selecione"
+              formControlName="statusPromoter"
+              [class.ng-dirty]="error.hasControlErrors(statusPromoter)"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
+
+    <p-tabPanel
+      header="Fornecedor"
+      [disabled]="disabledProviders || !auth.hasAnyPermission([wsPermissions.ROLE_PROVIDERS_CREATE])"
+    >
+      <ng-template pTemplate="content">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="statusProvider" [required]="providerRequired" label="Status"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="statusEnum"
+              placeholder="Selecione"
+              formControlName="statusProvider"
+              [class.ng-dirty]="error.hasControlErrors(statusProvider)"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
+
+    <p-tabPanel
+      header="Funcionário"
+      [disabled]="disabledEmployees || !auth.hasAnyPermission([wsPermissions.ROLE_EMPLOYEES_CREATE])"
+    >
+      <ng-template pTemplate="content">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="statusEmployee" [required]="employeeRequired" label="Status"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="statusEnum"
+              placeholder="Selecione"
+              formControlName="statusEmployee"
+              [class.ng-dirty]="error.hasControlErrors(statusEmployee)"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-3">
+            <app-error-msg
+              label="É Atendente"
+              [control]="isAttendant"
+              [required]="employeeAttendantRequired"
+            ></app-error-msg>
+
+            <div class="flex flex-wrap gap-3">
+              @for (item of optionsCheck; track item; let i = $index) {
+
+              <div class="flex align-items-center">
+                <p-radioButton
+                  name="isAttendant"
+                  [value]="item.value"
+                  [inputId]="'input' + i"
+                  formControlName="isAttendant"
+                  [class]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_IS_ATTENDANT]) ? 'p-disabled' : ''"
+                />
+                <label [for]="'input' + i" class="ml-2"> {{ item.label }} </label>
+              </div>
+              }
+            </div>
+          </div>
+
+          <div class="col-3">
+            <app-error-msg [control]="isManager" [required]="employeeManagerRequired" label="É Gerente"></app-error-msg>
+
+            <div class="flex flex-wrap gap-3">
+              @for (item of optionsCheck; track item; let i = $index) {
+
+              <div class="flex align-items-center">
+                <p-radioButton
+                  name="isManager"
+                  [value]="item.value"
+                  [inputId]="'input' + i"
+                  formControlName="isManager"
+                  [class]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_IS_MANAGER]) ? 'p-disabled' : ''"
+                />
+                <label [for]="'input' + i" class="ml-2"> {{ item.label }} </label>
+              </div>
+              }
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
+
+    <p-tabPanel
+      header="Guia Turístico"
+      [disabled]="disabledTourGuide || !auth.hasAnyPermission([wsPermissions.ROLE_TOUR_GUIDE_CREATE])"
+    >
+      <ng-template pTemplate="content">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-3">
+            <app-error-msg [control]="statusTourGuide" [required]="tourGuideRequired" label="Status"></app-error-msg>
+            <p-dropdown
+              inputId="dropdown"
+              [options]="statusEnum"
+              placeholder="Selecione"
+              formControlName="statusTourGuide"
+              [class.ng-dirty]="error.hasControlErrors(statusTourGuide)"
+            >
+            </p-dropdown>
+          </div>
+        </div>
+      </ng-template>
+    </p-tabPanel>
+  </p-tabView>
+
+  <br />
+  <br />
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

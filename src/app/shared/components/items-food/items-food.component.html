@@ -1,0 +1,100 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table [value]="foods" [responsive]="true" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm">
+    <ng-template pTemplate="caption">
+      <form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="addItems()">
+        <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+          <div class="col-6">
+            <app-error-msg [control]="product" label="Produto"></app-error-msg>
+            <p-dropdown
+              id="product"
+              [filter]="true"
+              [options]="products"
+              formControlName="product"
+              optionDisabled="inactive"
+              [autoDisplayFirst]="false"
+              (onShow)="onFocusProduct()"
+              (onChange)="onChangeProduct($event)"
+              emptyFilterMessage="Nenhum resultado encontrado"
+              [class.ng-dirty]="error.hasControlErrors(product)"
+            >
+            </p-dropdown>
+          </div>
+
+          <div class="col-2">
+            <label for="float-input">Valor</label>
+            <input
+              readonly
+              pInputText
+              type="text"
+              currencyMask
+              placeholder="0,00"
+              [value]="valueProductAdd | currency : 'BRL'"
+            />
+          </div>
+
+          <div class="col-3">
+            <app-error-msg [control]="quantity" label="Quantidade"></app-error-msg>
+            <p-inputNumber
+              [min]="0"
+              [max]="500"
+              mode="decimal"
+              [showButtons]="true"
+              inputId="horizontal"
+              spinnerMode="horizontal"
+              buttonLayout="horizontal"
+              formControlName="quantity"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+            >
+            </p-inputNumber>
+          </div>
+          <div class="col-1">
+            <br />
+            <button pButton type="submit" icon="pi pi-plus"></button>
+          </div>
+        </div>
+      </form>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Produto</th>
+        <th style="width: 8rem">Unitário</th>
+        <th style="width: 7rem">Quantidade</th>
+        <th style="width: 9rem">Total</th>
+        <th style="width: 3rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-item let-rowIndex="rowIndex">
+      <tr>
+        <td>{{ item?.product?.name }}</td>
+        <td>{{ item?.unitPrice | currency : 'BRL' }}</td>
+        <td>{{ item?.quantity }}</td>
+        <td>{{ item?.unitPrice * item?.quantity | currency : 'BRL' }}</td>
+        <td>
+          <a style="padding: 0.125rem" (click)="removeItem(rowIndex)" pTooltip="Excluir">
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Nenhum item adicionado ao Voucher!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left"> </ng-template>
+
+    <ng-template pTemplate="right">
+      <label>Total: </label>
+      <input type="text" pInputText currencyMask readonly placeholder="0,00" [value]="totalValue | currency : 'BRL'" />
+    </ng-template>
+  </p-toolbar>
+</div>

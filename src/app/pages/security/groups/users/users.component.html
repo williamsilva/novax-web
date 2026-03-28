@@ -1,0 +1,27 @@
+<p-pickList
+  filterBy="name"
+  [dragdrop]="true"
+  [responsive]="true"
+  sourceHeader="Usuários"
+  [target]="usersInGroup"
+  [source]="usersAvailable"
+  [showSourceControls]="false"
+  [showTargetControls]="false"
+  targetHeader="Usuários Liberados"
+  [sourceStyle]="{ height: '20rem' }"
+  [targetStyle]="{ height: '20rem' }"
+  sourceFilterPlaceholder="Buscar por Nome"
+  targetFilterPlaceholder="Buscar por Nome"
+  (onMoveToSource)="onMoveToUserInGroup($event)"
+  (onMoveToTarget)="onMoveToAvailableUsers($event)"
+  (onMoveAllToSource)="onMoveAllToUserInGroup($event)"
+  (onMoveAllToTarget)="onMoveAllToAvailableUsers($event)"
+>
+  <ng-template let-data pTemplate="item">
+    <div class="product-item">
+      <div class="product-list-detail">
+        <h5 class="p-mb-2">{{ data.name }}</h5>
+      </div>
+    </div>
+  </ng-template>
+</p-pickList>

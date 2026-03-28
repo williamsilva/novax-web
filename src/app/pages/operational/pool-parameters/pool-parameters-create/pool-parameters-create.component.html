@@ -1,0 +1,118 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-9" formGroupName="employee">
+      <app-error-msg [control]="employeeId" label="Colaborador"></app-error-msg>
+      <p-dropdown
+        [filter]="true"
+        filterBy="name"
+        optionValue="id"
+        optionLabel="name"
+        formControlName="id"
+        [options]="employees"
+        optionDisabled="inactive"
+        [autoDisplayFirst]="false"
+        [resetFilterOnHide]="true"
+        [class.ng-dirty]="error.hasControlErrors(employeeId)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="shift" label="Turno"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        [readonly]="true"
+        [options]="shiftEnum"
+        formControlName="shift"
+        [class.ng-dirty]="error.hasControlErrors(shift)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="pool" label="Piscina"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        [options]="poolEnum"
+        formControlName="pool"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [class.ng-dirty]="error.hasControlErrors(pool)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="ph" label="PH"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        [options]="phEnum"
+        formControlName="ph"
+        placeholder="Selecione"
+        [class.ng-dirty]="error.hasControlErrors(ph)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="alkalinity" label="Alcalinidade"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        [options]="alkalinityEnum"
+        formControlName="alkalinity"
+        [class.ng-dirty]="error.hasControlErrors(alkalinity)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="chlorine" label="Cloro"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        [options]="chlorineEnum"
+        formControlName="chlorine"
+        [class.ng-dirty]="error.hasControlErrors(chlorine)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12">
+      <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+    </div>
+  </div>
+
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_EQUIPMENT_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

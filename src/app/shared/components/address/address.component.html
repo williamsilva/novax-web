@@ -1,0 +1,170 @@
+<div class="card">
+  <div class="flex">
+    <button pButton label="Novo" icon="pi pi-plus" class="p-button-success mr-2" (click)="openNew($event)"></button>
+
+    <button
+      pButton
+      label="Delete"
+      icon="pi pi-trash"
+      class="p-button-danger"
+      (click)="deleteSelectedEntries($event)"
+      [disabled]="!selectedResources || !selectedResources.length"
+    ></button>
+  </div>
+  <br />
+
+  <p-table
+    dataKey="id"
+    [rowHover]="true"
+    [value]="resources"
+    [responsive]="true"
+    [(selection)]="selectedResources"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <!-- <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+        </th>
+        <th>Cidade</th>
+        <th>Bairro</th>
+        <th>Rua</th>
+        <th style="width: 4.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr>
+        <td>
+          <p-tableCheckbox [value]="entry"></p-tableCheckbox>
+        </td>
+        <td>{{ entry.city?.name }}-{{ entry.city?.state?.uf }}</td>
+        <td>{{ entry.burgh }}</td>
+        <td>{{ entry.street }}</td>
+
+        <td class="text-center">
+          <a style="padding: 0 0 0 0.5rem" pTooltip="Editar" tooltipPosition="top" (click)="editEntry(entry)">
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+          <a style="padding: 0 0 0 0.5rem" (click)="deleteEntry(entry)" pTooltip="Excluir" tooltipPosition="top">
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
+
+<form autocomplete="off" [formGroup]="resourceForm">
+  <p-dialog
+    [modal]="true"
+    styleClass="p-fluid"
+    [(visible)]="resourceDialog"
+    [style]="{ width: '500px' }"
+    [header]="editing ? 'Edição endereço' : 'Novo endereço'"
+  >
+    <ng-template pTemplate="content">
+      <div class="p-fluid grid">
+        <div class="col-4">
+          <app-error-msg [control]="postalCode" label="Cep"></app-error-msg>
+          <div class="p-inputgroup">
+            <input
+              id="name"
+              type="text"
+              pInputText
+              [mask]="mask"
+              formControlName="postalCode"
+              [class.ng-dirty]="error.hasControlErrors(postalCode)"
+            />
+            <button pButton type="button" icon="pi pi-search" (click)="consultPostalCode()"></button>
+          </div>
+        </div>
+
+        <div class="col-8" formGroupName="state">
+          <app-error-msg [control]="stateId" label="Estado"></app-error-msg>
+          <p-dropdown
+            id="state"
+            [filter]="true"
+            [options]="states"
+            formControlName="id"
+            (onChange)="onChange($event)"
+            placeholder="Selecione o Estado"
+            [class.ng-dirty]="error.hasControlErrors(stateId)"
+          >
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="p-fluid grid">
+        <div class="col-12" formGroupName="city">
+          <app-error-msg [control]="cityId" label="Cidade"></app-error-msg>
+          <p-dropdown
+            id="city"
+            [filter]="true"
+            [options]="cities"
+            formControlName="id"
+            placeholder="Selecione uma Cidade"
+            [class.ng-dirty]="error.hasControlErrors(cityId)"
+          >
+          </p-dropdown>
+        </div>
+      </div>
+
+      <div class="p-fluid grid">
+        <div class="col-12">
+          <app-error-msg [control]="street" label="Rua"></app-error-msg>
+          <input pInputText type="text" formControlName="street" [class.ng-dirty]="error.hasControlErrors(street)" />
+        </div>
+      </div>
+
+      <div class="p-fluid grid">
+        <div class="col-3">
+          <app-error-msg [control]="number" label="Número"></app-error-msg>
+          <input
+            pInputText
+            type="text"
+            id="number"
+            formControlName="number"
+            [class.ng-dirty]="error.hasControlErrors(number)"
+          />
+        </div>
+
+        <div class="col-9">
+          <app-error-msg [control]="burgh" label="Bairro"></app-error-msg>
+          <input
+            id="burgh"
+            pInputText
+            type="text"
+            formControlName="burgh"
+            [class.ng-dirty]="error.hasControlErrors(burgh)"
+          />
+        </div>
+      </div>
+
+      <div class="p-fluid grid">
+        <div class="col-12">
+          <app-error-msg [control]="complement" label="Complemento" [required]="false"></app-error-msg>
+          <input pInputText type="text" id="complement" formControlName="complement" />
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        pRipple
+        label="Cancel"
+        icon="pi pi-times"
+        class="p-button-text"
+        (click)="hideDialog($event)"
+      ></button>
+      <button pButton pRipple label="Save" icon="pi pi-check" class="p-button-text" (click)="saveResources()"></button>
+    </ng-template>
+  </p-dialog>
+</form>

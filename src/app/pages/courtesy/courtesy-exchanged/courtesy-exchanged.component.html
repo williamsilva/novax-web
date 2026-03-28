@@ -1,0 +1,103 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-5">
+      <app-error-msg [control]="actualVisitDate" label="Data Visita"></app-error-msg>
+      <p-calendar
+        appendTo="body"
+        [inline]="false"
+        [showIcon]="true"
+        dateFormat="dd/mm/yy"
+        class="p-calendar-sm"
+        name="actualVisitDate"
+        [yearNavigator]="true"
+        [readonlyInput]="false"
+        [monthNavigator]="true"
+        [selectOtherMonths]="true"
+        formControlName="actualVisitDate"
+        [class.ng-dirty]="error.hasControlErrors(actualVisitDate)"
+      >
+      </p-calendar>
+    </div>
+
+    <div class="col-7">
+      <app-error-msg [control]="removedBy" label="Colaborador"></app-error-msg>
+      <p-autoComplete
+        field="name"
+        [minLength]="3"
+        [dropdown]="true"
+        [forceSelection]="true"
+        formControlName="removedBy"
+        [suggestions]="suggestions"
+        placeholder="Digite para pesquisar"
+        (completeMethod)="filterCountry($event)"
+        [class.ng-dirty]="error.hasControlErrors(removedBy)"
+      >
+        <!-- <ng-template let-removedBy pTemplate="item">
+        <div class="p-d-flex p-ai-center">
+          <div>
+            <div>{{ removedBy.name }}</div>
+            <small class="p-text-muted">{{ removedBy.name }}</small>
+          </div>
+        </div>
+      </ng-template> -->
+      </p-autoComplete>
+    </div>
+  </div>
+
+  <div>
+    <p-table [value]="resources" styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Cliente</th>
+          <th style="width: 8rem">Documente</th>
+          <th style="width: 7rem">Data</th>
+          <th style="width: 3rem"></th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-entry>
+        <tr>
+          <td class="p-ellipsis">{{ entry.client }}</td>
+          <td>{{ entry.document | maskDocument }}</td>
+          <td>{{ entry.scheduledVisitDate | date : 'dd/MM/yyyy' }}</td>
+          <td>
+            <a pTooltip="Excluir" tooltipPosition="top" style="padding: 0 0 0 0.5rem" (click)="deleteResource(entry)">
+              <i class="pi false-icon pi-times-circle"></i>
+            </a>
+          </td>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="10">Tabela não pode ser Vazia</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-3 col-offset-6">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_COURTESY_EXCHANGE])"
+      ></button>
+    </div>
+
+    <div class="col-3">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

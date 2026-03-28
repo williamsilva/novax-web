@@ -1,0 +1,75 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    [value]="resources"
+    [responsive]="true"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Autorizada</th>
+        <th style="width: 7rem">Envio</th>
+        <th style="width: 7rem">Retorno</th>
+        <th style="width: 7rem">Garantia</th>
+        <th style="width: 7.5rem">Valor</th>
+        <th style="width: 8rem">Status</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr>
+        <td>{{ entry.authorized?.name | titlecase }}</td>
+        <td>{{ entry.sendDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.returnDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.warrantyEnd | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.price | currency : 'BRL' }}</td>
+        <td style="text-align: center">
+          <span
+            class="customer-badge"
+            [ngClass]="{
+              'status-new': entry.status === 'PROPOSAL',
+              'status-renewal': entry.status === 'APPROVED',
+              'status-unqualified': entry.status === 'BUDGET',
+              'status-qualified': entry.status === 'RECEIVED',
+              'status-proposal': entry.status === 'CONCERTED',
+            }"
+            >{{
+              entry.status === 'APPROVED'
+                ? 'Aprovado'
+                : entry.status === 'CONCERTED'
+                ? 'Concertado'
+                : entry.status === 'PROPOSAL'
+                ? 'Proposta'
+                : entry.status === 'BUDGET'
+                ? 'Orçando'
+                : 'Recebido'
+            }}</span
+          >
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8">
+          <span text="center">Nenhuma manutenção cadastrada</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+
+  <p-toolbar styleClass="p-mb-4">
+    <ng-template pTemplate="left"> </ng-template>
+
+    <ng-template pTemplate="right">
+      <label>Total Manutenção: </label>
+      <input
+        readonly
+        type="text"
+        pInputText
+        currencyMask
+        placeholder="0,00"
+        [value]="totalMaintenance | currency : 'BRL'"
+      />
+    </ng-template>
+  </p-toolbar>
+</div>

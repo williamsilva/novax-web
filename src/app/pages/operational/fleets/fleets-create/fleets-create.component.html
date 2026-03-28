@@ -1,0 +1,142 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="departureDate" label="Data Saída"></app-error-msg>
+      <p-calendar
+        appendTo="body"
+        [inline]="false"
+        [showIcon]="true"
+        [minDate]="minDate"
+        [maxDate]="maxDate"
+        name="departureDate"
+        dateFormat="dd/mm/yy"
+        class="p-calendar-sm"
+        [yearNavigator]="true"
+        [readonlyInput]="false"
+        [monthNavigator]="true"
+        [selectOtherMonths]="true"
+        formControlName="departureDate"
+        (onBlur)="onBlurDepartureDate()"
+        [class.ng-dirty]="error.hasControlErrors(departureDate)"
+      >
+      </p-calendar>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="departureTime" label="Hora Saída"></app-error-msg>
+      <p-inputMask
+        mask="99:99"
+        (onBlur)="validTime()"
+        formControlName="departureTime"
+        [class.ng-dirty]="error.hasControlErrors(departureTime)"
+      ></p-inputMask>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="arrivalDate" label="Data Retorno"></app-error-msg>
+      <p-calendar
+        appendTo="body"
+        [inline]="false"
+        [showIcon]="true"
+        name="arrivalDate"
+        [maxDate]="maxDate"
+        dateFormat="dd/mm/yy"
+        class="p-calendar-sm"
+        (onBlur)="validTime()"
+        [yearNavigator]="true"
+        [readonlyInput]="false"
+        [monthNavigator]="true"
+        [selectOtherMonths]="true"
+        [minDate]="minDateDeparture"
+        formControlName="arrivalDate"
+        [class.ng-dirty]="error.hasControlErrors(arrivalDate)"
+      >
+      </p-calendar>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="arrivalTime" label="Hora Retorno"></app-error-msg>
+      <p-inputMask
+        mask="99:99"
+        (onBlur)="validTime()"
+        formControlName="arrivalTime"
+        [class.ng-dirty]="error.hasControlErrors(arrivalTime)"
+      ></p-inputMask>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="initialKm" label="Km Inicial"></app-error-msg>
+      <p-inputNumber
+        inputId="initialKm"
+        formControlName="initialKm"
+        [class.ng-dirty]="error.hasControlErrors(initialKm)"
+      >
+      </p-inputNumber>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="finalKm" label="Km Final"></app-error-msg>
+      <p-inputNumber inputId="finalKm" formControlName="finalKm" [class.ng-dirty]="error.hasControlErrors(finalKm)">
+      </p-inputNumber>
+    </div>
+
+    <div class="col-6" formGroupName="employee">
+      <app-error-msg [control]="employeeId" label="Colaborador"></app-error-msg>
+
+      <p-dropdown
+        [filter]="true"
+        filterBy="name"
+        optionValue="id"
+        optionLabel="name"
+        formControlName="id"
+        [options]="employees"
+        optionDisabled="inactive"
+        [autoDisplayFirst]="false"
+        [resetFilterOnHide]="true"
+        [class.ng-dirty]="error.hasControlErrors(employeeId)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12">
+      <app-error-msg [control]="route" label="Rota"></app-error-msg>
+      <input pInputText type="text" formControlName="route" [class.ng-dirty]="error.hasControlErrors(route)" />
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12">
+      <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_FLEETS_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

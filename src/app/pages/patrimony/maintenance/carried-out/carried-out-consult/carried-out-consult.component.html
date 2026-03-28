@@ -1,0 +1,284 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    [lazy]="true"
+    dataKey="uuid"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    selectionMode="multiple"
+    [(first)]="firstRecords"
+    [metaKeySelection]="true"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    (onRowSelect)="onRowSelect($event)"
+    [exportHeader]="'customExportHeader'"
+    [(selection)]="selectionMultipleTable"
+    (onRowUnselect)="onRowUnselect($event)"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Inserir"
+          (click)="openNew()"
+          icon="pi pi-plus-circle"
+          [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_MAINTENANCE_CARRIED_OUT_CREATE])"
+        ></button>
+
+        <span class="p-input-icon-left ml-auto">
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="XLS"
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            tooltipPosition="bottom"
+            class="p-button-success mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="PDF"
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            tooltipPosition="bottom"
+            class="p-button-warning mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-filter"
+            tooltipPosition="bottom"
+            pTooltip="Selection Only"
+            class="p-button-info ml-auto mr-8"
+            (click)="exportExcelSelectionOnly()"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Clear"
+            (click)="clear(table)"
+            icon="pi pi-filter-slash"
+            class="p-button-outlined ml-auto"
+          ></button>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="equipment.patrimonyNumber" style="width: 7.5rem">
+          <div class="flex p-jc-between p-ai-center">
+            N°
+            <p-sortIcon field="equipment.patrimonyNumber"></p-sortIcon>
+            <p-columnFilter
+              type="numeric"
+              display="menu"
+              class="ml-auto"
+              field="equipment"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="description">
+          <div class="flex p-jc-between p-ai-center">
+            Equipamento
+            <p-sortIcon field="description"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="description"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="sendDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Envio
+            <p-sortIcon field="sendDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              field="sendDate"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="returnDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Retorno
+            <p-sortIcon field="returnDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              field="returnDate"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="price" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Valor
+            <p-sortIcon field="price"></p-sortIcon>
+            <p-columnFilter
+              field="price"
+              type="numeric"
+              display="menu"
+              currency="BRL"
+              class="ml-auto"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="status" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Status
+            <p-sortIcon field="status"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              field="status"
+              class="ml-auto"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="statusMaintenanceEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="
+                        'customer-badge status-' +
+                        hasClassStyle.statusMaintenance(keyValueStatusMaintenance.getValue(option.value))
+                      "
+                      >{{ option.label }}</span
+                    >
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="typeMaintenance" style="width: 14rem">
+          <div class="flex p-jc-between p-ai-center">
+            Tipo
+            <p-sortIcon field="typeMaintenance"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              [showOperator]="false"
+              [showAddButton]="false"
+              field="typeMaintenance"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="typeMaintenanceEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="
+                        'customer-badge status-' +
+                        hasClassStyle.typeMaintenance(keyValueTypeMaintenance.getValue(option.value))
+                      "
+                      >{{ option.label }}</span
+                    >
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 4.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td style="text-align: center">{{ entry.equipment.patrimonyNumber }}</td>
+        <td class="p-ellipsis">{{ entry.equipment.description }}</td>
+        <td>{{ entry.sendDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.returnDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.price || 0 | currency : 'BRL' }}</td>
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.statusMaintenance(entry.status)">{{
+            setDescription.statusMaintenance(entry.status)
+          }}</span>
+        </td>
+
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.typeMaintenance(entry.typeMaintenance)">{{
+            setDescription.typeMaintenance(entry.typeMaintenance)
+          }}</span>
+        </td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_MAINTENANCE_CARRIED_OUT_CREATE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.uuid)"
+            [class]="
+              !this.auth.hasAnyPermission([wsPermissions.ROLE_MAINTENANCE_CARRIED_OUT_DELETE]) ? 'p-disabled' : ''
+            "
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

@@ -1,0 +1,43 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-6">
+      <app-error-msg [control]="name" label="Nome"></app-error-msg>
+      <input pInputText type="text" formControlName="name" [class.ng-dirty]="error.hasControlErrors(name)" />
+    </div>
+
+    <div class="col-6">
+      <app-error-msg [control]="description" label="Descrição"></app-error-msg>
+      <input
+        pInputText
+        type="text"
+        formControlName="description"
+        [class.ng-dirty]="error.hasControlErrors(description)"
+      />
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_PRODUCTS_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

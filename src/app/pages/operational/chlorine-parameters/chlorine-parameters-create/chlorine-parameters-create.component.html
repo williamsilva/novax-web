@@ -1,0 +1,228 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-9" formGroupName="employee">
+      <app-error-msg [control]="employeeId" label="Colaborador"></app-error-msg>
+      <p-dropdown
+        [filter]="true"
+        filterBy="name"
+        optionValue="id"
+        optionLabel="name"
+        formControlName="id"
+        [options]="employees"
+        optionDisabled="inactive"
+        [autoDisplayFirst]="false"
+        [resetFilterOnHide]="true"
+        [class.ng-dirty]="error.hasControlErrors(employeeId)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="shift" label="Turno"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        [readonly]="true"
+        [options]="shiftEnum"
+        formControlName="shift"
+        [class.ng-dirty]="error.hasControlErrors(shift)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="waterTank" label="Água"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="waterTankEnum"
+        formControlName="waterTank"
+        [class.ng-dirty]="error.hasControlErrors(waterTank)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="brineTank" label="Salmora"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="brineTankEnum"
+        formControlName="brineTank"
+        [class.ng-dirty]="error.hasControlErrors(brineTank)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="saltFilter" label="Filtro Sal"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="saltFilterEnum"
+        formControlName="saltFilter"
+        [class.ng-dirty]="error.hasControlErrors(saltFilter)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="flowMeter1" label="Medidor 1"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="flowMeterEnum"
+        formControlName="flowMeter1"
+        [class.ng-dirty]="error.hasControlErrors(flowMeter1)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="flowMeter2" label="Medidor 2"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="flowMeterEnum"
+        formControlName="flowMeter2"
+        [class.ng-dirty]="error.hasControlErrors(flowMeter2)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="flowMeter3" label="Medidor 3"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="flowMeterEnum"
+        formControlName="flowMeter3"
+        [class.ng-dirty]="error.hasControlErrors(flowMeter3)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="doser1" label="Dosadora 1"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="doserEnum"
+        formControlName="doser1"
+        [class.ng-dirty]="error.hasControlErrors(doser1)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="doser2" label="Dosadora 2"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="doserEnum"
+        formControlName="doser2"
+        [class.ng-dirty]="error.hasControlErrors(doser2)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3">
+      <app-error-msg [control]="doser3" label="Dosadora 3"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="doserEnum"
+        formControlName="doser3"
+        [class.ng-dirty]="error.hasControlErrors(doser3)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="machine1" label="Máquina 1"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="machineEnum"
+        formControlName="machine1"
+        [class.ng-dirty]="error.hasControlErrors(machine1)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="machine2" label="Máquina 2"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="machineEnum"
+        formControlName="machine2"
+        [class.ng-dirty]="error.hasControlErrors(machine2)"
+      >
+      </p-dropdown>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="machine3" label="Máquina 3"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        optionDisabled="inactive"
+        [options]="machineEnum"
+        formControlName="machine3"
+        [class.ng-dirty]="error.hasControlErrors(machine3)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em"></div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12">
+      <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_EQUIPMENT_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

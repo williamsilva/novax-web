@@ -1,0 +1,61 @@
+<div class="layout-topbar">
+  <a href="#" id="layout-menu-btn" class="menu-btn" (click)="app.onMenuButtonClick($event)">
+    <i class="pi pi-bars"></i>
+  </a>
+
+  <div class="layout-topbar-menu-wrapper">
+    <ul class="topbar-menu fadeInDown" [ngClass]="{ 'topbar-menu-active': app.topBarMenuActive }">
+      <li class="profile-item" #profile [ngClass]="{ 'active-topmenuitem': app.activeTopBarItem === profile }">
+        <a href="#" (click)="app.onTopBarItemClick($event, profile)">
+          <img [src]="imageUrl" alt="profile-image" />
+          <span class="topbar-item-name profile-name">{{ auth.jwtPayload?.user_full_name }}</span>
+        </a>
+
+        <ul class="fadeInDown animated">
+          <!--  <li role="menuitem">
+            <a href="#" (click)="app.onTopbarSubItemClick($event)">
+              <i class="pi pi-fw pi-user"></i>
+              <span>Profile</span>
+              <span class="topbar-badge">5</span>
+            </a>
+          </li> -->
+
+          <!-- <li role="menuitem">
+            <a href="#" (click)="app.onTopbarSubItemClick($event)">
+              <i class="pi pi-fw pi-lock"></i>
+              <span>Privacy</span>
+              <span class="topbar-badge">2</span>
+            </a>
+          </li> -->
+
+          <li role="menuitem" [class]="!auth.hasAnyPermission(['USERS_CHANGE_PASSWORD']) ? 'p-disabled' : ''">
+            <a href="#" (click)="onTopBarChangePasswordClick($event)">
+              <i class="pi pi-fw pi-cog"></i>
+              <span>Mudar Senha</span>
+            </a>
+          </li>
+
+          <li role="menuitem">
+            <a href="#" (click)="onTopBarLogoutClick($event)">
+              <i class="pi pi-fw pi-sign-out"></i>
+              <span>Logout</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <a href="#" class="topbar-menu-btn" (click)="app.onTopBarMenuButtonClick($event)">
+      <img [src]="imageUrl" alt="profile-image" />
+    </a>
+
+    <a
+      href="#"
+      class="rightpanel-btn"
+      [ngClass]="{ 'rightpanel-btn-active': app.rightPanelActive }"
+      (click)="app.onRightPanelButtonClick($event)"
+    >
+      <i class="topbar-icon pi pi-fw pi-align-right"></i>
+    </a>
+  </div>
+</div>

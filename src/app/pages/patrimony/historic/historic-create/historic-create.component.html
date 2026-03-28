@@ -1,0 +1,131 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-3" formGroupName="equipment">
+      <app-error-msg [control]="equipmentNumber" label="Patrimônio"></app-error-msg>
+      <input
+        mask="0000"
+        pInputText
+        type="text"
+        (blur)="findByPatrimonyNumber()"
+        formControlName="patrimonyNumber"
+        [class.ng-dirty]="error.hasControlErrors(equipmentNumber)"
+      />
+    </div>
+
+    <div class="col-6" formGroupName="equipment">
+      <app-error-msg [control]="equipmentDescription" label="Equipamento" [required]="false"></app-error-msg>
+      <input
+        pInputText
+        type="text"
+        formControlName="description"
+        [class.ng-dirty]="error.hasControlErrors(equipmentDescription)"
+      />
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="status" label="Status"></app-error-msg>
+      <p-dropdown
+        inputId="dropdown"
+        placeholder="Selecione"
+        formControlName="status"
+        optionDisabled="inactive"
+        [options]="statusHistoricEnum"
+        (onChange)="validMethodsByStatus()"
+        [class.ng-dirty]="error.hasControlErrors(status)"
+      >
+      </p-dropdown>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-6" formGroupName="location">
+      <app-error-msg [control]="locationId" label="Local"></app-error-msg>
+      <p-dropdown
+        [filter]="true"
+        filterBy="name"
+        optionValue="id"
+        optionLabel="name"
+        formControlName="id"
+        [options]="locations"
+        optionDisabled="inactive"
+        [autoDisplayFirst]="false"
+        [resetFilterOnHide]="true"
+        [class.ng-dirty]="error.hasControlErrors(locationId)"
+      >
+      </p-dropdown>
+    </div>
+    <div class="col-3">
+      <app-error-msg [control]="initialDate" [required]="true" label="Chegada"></app-error-msg>
+      <p-calendar
+        appendTo="body"
+        [inline]="false"
+        [showIcon]="true"
+        name="initialDate"
+        dateFormat="dd/mm/yy"
+        class="p-calendar-sm"
+        [yearNavigator]="true"
+        [readonlyInput]="false"
+        [monthNavigator]="true"
+        [selectOtherMonths]="true"
+        formControlName="initialDate"
+        [class.ng-dirty]="error.hasControlErrors(initialDate)"
+      >
+      </p-calendar>
+    </div>
+
+    <div class="col-3">
+      <app-error-msg [control]="finalDate" [required]="requiredFinalDate" label="Saída"></app-error-msg>
+      <p-calendar
+        appendTo="body"
+        [inline]="false"
+        [showIcon]="true"
+        name="finalDate"
+        dateFormat="dd/mm/yy"
+        class="p-calendar-sm"
+        [yearNavigator]="true"
+        [readonlyInput]="false"
+        [monthNavigator]="true"
+        [selectOtherMonths]="true"
+        formControlName="finalDate"
+        [class.ng-dirty]="error.hasControlErrors(finalDate)"
+      >
+      </p-calendar>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+    <div class="col-12">
+      <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+      <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+    </div>
+  </div>
+
+  <br />
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_HISTORIC_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

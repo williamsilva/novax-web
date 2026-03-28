@@ -1,0 +1,100 @@
+<div class="card">
+  <div class="flex">
+    <button pButton pRipple type="button" label="Inserir" (click)="openNew()" icon="pi pi-plus-circle"></button>
+
+    <span class="p-input-icon-left ml-auto">
+      <button
+        pButton
+        pRipple
+        type="button"
+        pTooltip="XLS"
+        icon="pi pi-file-excel"
+        (click)="exportExcel()"
+        tooltipPosition="bottom"
+        class="p-button-success mr-2"
+      ></button>
+
+      <button
+        pButton
+        pRipple
+        type="button"
+        pTooltip="PDF"
+        icon="pi pi-file-pdf"
+        (click)="exportPdf()"
+        tooltipPosition="bottom"
+        class="p-button-warning mr-2"
+      ></button>
+
+      <button
+        pButton
+        pRipple
+        type="button"
+        icon="pi pi-filter"
+        tooltipPosition="bottom"
+        pTooltip="Selection Only"
+        class="p-button-info ml-auto mr-8"
+        (click)="exportExcelSelectionOnly()"
+      ></button>
+
+      <button
+        pButton
+        pRipple
+        type="button"
+        label="Clear"
+        (click)="clear()"
+        icon="pi pi-filter-slash"
+        class="p-button-outlined ml-auto"
+      ></button>
+    </span>
+  </div>
+
+  <p-tabView (onChange)="onChangeAgents($event)">
+    <p-tabPanel header="Agentes" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_CONSULT])">
+      @if (agentType === undefined && auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_CONSULT])) {
+      <div>
+        <app-agent-consult></app-agent-consult>
+      </div>
+      }
+    </p-tabPanel>
+
+    <p-tabPanel header="Clientes" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_CLIENTS_CONSULT])">
+      @if (agentType === this.getValueKeyByEnum(TypeAgentEnum.Client)) {
+      <div>
+        <app-client-consult></app-client-consult>
+      </div>
+      }
+    </p-tabPanel>
+
+    <p-tabPanel header="Promotores" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_PROMOTERS_CONSULT])">
+      @if (agentType === this.getValueKeyByEnum(TypeAgentEnum.Promoter)) {
+      <div>
+        <app-promoter-consult></app-promoter-consult>
+      </div>
+      }
+    </p-tabPanel>
+
+    <p-tabPanel header="Fornecedores" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_PROVIDERS_CONSULT])">
+      @if (agentType === this.getValueKeyByEnum(TypeAgentEnum.Provider)) {
+      <div>
+        <app-provider-consult></app-provider-consult>
+      </div>
+      }
+    </p-tabPanel>
+
+    <p-tabPanel header="Funcionários" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_EMPLOYEES_CONSULT])">
+      @if (agentType === this.getValueKeyByEnum(TypeAgentEnum.Employee)) {
+      <div>
+        <app-employee-consult></app-employee-consult>
+      </div>
+      }
+    </p-tabPanel>
+
+    <p-tabPanel header="Guia Turístico" [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_TOUR_GUIDE_CONSULT])">
+      @if (agentType === this.getValueKeyByEnum(TypeAgentEnum.Tour_Guide)) {
+      <div>
+        <app-tour-guide-consult></app-tour-guide-consult>
+      </div>
+      }
+    </p-tabPanel>
+  </p-tabView>
+</div>

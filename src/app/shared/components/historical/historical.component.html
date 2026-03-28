@@ -1,0 +1,52 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    [value]="resources"
+    [responsive]="true"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th>Local</th>
+        <th style="width: 9rem">Status</th>
+        <th style="width: 8rem">Data Chegada</th>
+        <th style="width: 8rem">Data Saída</th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr>
+        <td>{{ entry.location?.description | titlecase }}</td>
+        <td style="text-align: center">
+          <span
+            class="customer-badge"
+            [ngClass]="{
+              'status-new': entry.status === 'ACTIVE',
+              'status-renewal': entry.status === 'REMOVED',
+              'status-proposal': entry.status === 'MAINTENANCE',
+              'status-unqualified': entry.status === 'DISCARDED',
+            }"
+            >{{
+              entry.status === 'ACTIVE'
+                ? 'Ativo'
+                : entry.status === 'REMOVED'
+                ? 'Removido'
+                : entry.status === 'MAINTENANCE'
+                ? 'Manutenção'
+                : 'Discartado'
+            }}</span
+          >
+        </td>
+        <td>{{ entry.initialDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.finalDate | date : 'dd/MM/yyyy' }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="8">
+          <span text="center">Nenhum historico cadastrado</span>
+        </td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

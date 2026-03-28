@@ -1,0 +1,324 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    dataKey="id"
+    [lazy]="true"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    [(first)]="firstRecords"
+    [metaKeySelection]="true"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    (onRowSelect)="onRowSelect($event)"
+    [exportHeader]="'customExportHeader'"
+    [(selection)]="selectionMultipleTable"
+    (onRowUnselect)="onRowUnselect($event)"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Inserir"
+          (click)="openNew()"
+          icon="pi pi-plus-circle"
+          [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_USERS_CREATE])"
+        ></button>
+
+        <i style="padding: 0.7rem 0 0 0.5em" class="pi pi-bars"></i>
+
+        <button
+          pButton
+          pRipple
+          type="button"
+          pTooltip="Ativar"
+          tooltipPosition="bottom"
+          icon="pi pi-check-circle"
+          style="margin: 0 0.5em"
+          class="p-button-success p-mr-2"
+          (click)="activateSelectedResources()"
+          [disabled]="
+            !disabledActivate ||
+            !selectionMultipleTable ||
+            !selectionMultipleTable.length ||
+            !auth.hasAnyPermission([wsPermissions.ROLE_USERS_ACTIVE_OR_INACTIVE])
+          "
+        ></button>
+
+        <button
+          pButton
+          pRipple
+          type="button"
+          icon="pi pi-shield"
+          pTooltip="Dasativar"
+          tooltipPosition="bottom"
+          class="p-button-warning p-mr-2"
+          (click)="inactivateSelectedResources()"
+          [disabled]="
+            !disabledInactivate ||
+            !selectionMultipleTable ||
+            !selectionMultipleTable.length ||
+            !auth.hasAnyPermission([wsPermissions.ROLE_USERS_ACTIVE_OR_INACTIVE])
+          "
+        ></button>
+
+        <span class="p-input-icon-left ml-auto">
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="XLS"
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            tooltipPosition="bottom"
+            class="p-button-success mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="PDF"
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            tooltipPosition="bottom"
+            class="p-button-warning mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-filter"
+            tooltipPosition="bottom"
+            pTooltip="Selection Only"
+            class="p-button-info ml-auto mr-8"
+            (click)="exportExcelSelectionOnly()"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Clear"
+            (click)="clear(table)"
+            icon="pi pi-filter-slash"
+            class="p-button-outlined ml-auto"
+          ></button>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 3rem">
+          <!--  <p-tableHeaderCheckbox></p-tableHeaderCheckbox> -->
+        </th>
+        <th pSortableColumn="name">
+          <div class="flex p-jc-between p-ai-center">
+            Nome
+            <p-sortIcon field="name"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="name"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="email">
+          <div class="flex p-jc-between p-ai-center">
+            Usuário
+            <p-sortIcon field="email"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="email"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            >
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 12rem" pSortableColumn="document">
+          <div class="flex p-jc-between p-ai-center">
+            Documento
+            <p-sortIcon field="document"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="document"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 10rem" pSortableColumn="status">
+          <div class="flex p-jc-between p-ai-center">
+            Status
+            <p-sortIcon field="status"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              field="status"
+              matchMode="in"
+              class="ml-auto"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="statusEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="'customer-badge status-' + hasClassStyle.status(keyValueStatus.getValue(option.value))"
+                      >{{ option.label }}</span
+                    >
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="createdBy" style="width: 13rem">
+          <div class="flex p-jc-between p-ai-center">
+            Cadastro
+            <p-sortIcon field="createdBy"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              field="createdBy"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect
+                  [options]="users"
+                  optionLabel="name"
+                  placeholder="Todos"
+                  (onChange)="filter($event.value)"
+                >
+                  <ng-template let-option pTemplate="item">
+                    <div class="p-multiselect-representative-option">
+                      <span class="p-ml-1">{{ option.name }}</span>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template></p-columnFilter
+            >
+          </div>
+        </th>
+
+        <th pSortableColumn="lastLogin" style="width: 11rem">
+          <div class="flex p-jc-between p-ai-center">
+            Login
+            <p-sortIcon field="lastLogin"></p-sortIcon>
+          </div>
+        </th>
+
+        <th style="width: 5.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td>
+          <p-tableCheckbox
+            [value]="entry"
+            [disabled]="disabledTableCheckbox(entry) || canSelect(entry) || activeByPermission()"
+          ></p-tableCheckbox>
+        </td>
+        <td class="p-ellipsis">{{ entry.name | titlecase }}</td>
+        <td class="p-ellipsis">{{ entry.email }}</td>
+        <td>{{ entry.document | maskDocument }}</td>
+
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.status(entry.status)">{{
+            setDescription.status(entry.status)
+          }}</span>
+        </td>
+
+        <td>{{ entry.createdBy?.name | titlecase }}</td>
+        <td>{{ entry.lastLogin | date : 'dd/MM/yyyy hh:mm:ss' }}</td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Dasativar"
+            tooltipPosition="top"
+            (click)="inactivateHandler(entry.id)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_USERS_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+            [hidden]="
+              entry.status === disabledTableCheckbox(entry) ||
+              entry.status === getValueKeyStatusByEnum(StatusEnum.Blocked) ||
+              entry.status === getValueKeyStatusByEnum(StatusEnum.Inactive)
+            "
+          >
+            <i class="pi pi-shield"></i>
+          </a>
+
+          <a
+            pTooltip="Ativar"
+            tooltipPosition="top"
+            (click)="activateHandler(entry.id)"
+            [hidden]="
+              entry.status === getValueKeyStatusByEnum(StatusEnum.Active) ||
+              entry.status === disabledTableCheckbox(entry)
+            "
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_USERS_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi pi-check-circle"></i>
+          </a>
+
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_USERS_CHANGE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.id)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_USERS_DELETE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

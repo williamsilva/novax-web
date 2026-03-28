@@ -1,0 +1,256 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <p-tabView [(activeIndex)]="activeIndex">
+    <p-tabPanel header="Dados" leftIcon="pi pi-home">
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em" formGroupName="equipment">
+        <div class="col-2">
+          <app-error-msg [control]="equipmentNumber" label="Patrimônio"></app-error-msg>
+          <input
+            mask="0000"
+            pInputText
+            type="text"
+            (blur)="findByPatrimonyNumber()"
+            formControlName="patrimonyNumber"
+            [class.ng-dirty]="error.hasControlErrors(equipmentNumber)"
+          />
+        </div>
+
+        <div class="col-5">
+          <app-error-msg [control]="equipmentDescription" label="Equipamento" [required]="false"></app-error-msg>
+          <input
+            pInputText
+            type="text"
+            formControlName="description"
+            [class.ng-dirty]="error.hasControlErrors(equipmentDescription)"
+          />
+        </div>
+
+        <div class="col-3">
+          <app-error-msg [control]="equipmentBuyDate" [required]="false" label="Data Compra"></app-error-msg>
+          <p-calendar
+            name="buyDate"
+            appendTo="body"
+            [inline]="false"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            formControlName="buyDate"
+            [selectOtherMonths]="true"
+            [class.ng-dirty]="error.hasControlErrors(equipmentBuyDate)"
+          >
+          </p-calendar>
+        </div>
+
+        <div class="col-2">
+          <app-error-msg [control]="equipmentPrice" [required]="false" label="Valor"></app-error-msg>
+          <p-inputNumber
+            locale="pt-BR"
+            currency="BRL"
+            mode="currency"
+            class="ng-invalid"
+            formControlName="price"
+            placeholder="E.g.: 20,00"
+            [class.ng-dirty]="error.hasControlErrors(equipmentPrice)"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-7" formGroupName="authorized">
+          <app-error-msg [control]="authorizedId" label="Autorizada"></app-error-msg>
+          <p-dropdown
+            [filter]="true"
+            filterBy="name"
+            optionValue="id"
+            optionLabel="name"
+            formControlName="id"
+            [options]="providers"
+            optionDisabled="inactive"
+            [autoDisplayFirst]="false"
+            [resetFilterOnHide]="true"
+            [class.ng-dirty]="error.hasControlErrors(authorizedId)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-3">
+          <app-error-msg [control]="status" label="Status"></app-error-msg>
+          <p-dropdown
+            inputId="dropdown"
+            placeholder="Selecione"
+            formControlName="status"
+            optionDisabled="inactive"
+            [options]="statusMaintenanceEnum"
+            (onChange)="validMethodsByStatus()"
+            [class.ng-dirty]="error.hasControlErrors(status)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-2">
+          <app-error-msg [control]="price" [required]="requiredPrice" label="Valor"></app-error-msg>
+          <p-inputNumber
+            locale="pt-BR"
+            currency="BRL"
+            mode="currency"
+            class="ng-invalid"
+            formControlName="price"
+            placeholder="E.g.: 20,00"
+            [class.ng-dirty]="error.hasControlErrors(price)"
+          ></p-inputNumber>
+        </div>
+      </div>
+
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-4">
+          <app-error-msg [control]="typeMaintenance" label="Tipo"></app-error-msg>
+          <p-dropdown
+            inputId="dropdown"
+            placeholder="Selecione"
+            optionDisabled="inactive"
+            [options]="typeMaintenanceEnum"
+            formControlName="typeMaintenance"
+            [class.ng-dirty]="error.hasControlErrors(typeMaintenance)"
+          >
+          </p-dropdown>
+        </div>
+
+        <div class="col-8">
+          <app-error-msg [control]="description" label="Descrição"></app-error-msg>
+          <input
+            pInputText
+            type="text"
+            formControlName="description"
+            [class.ng-dirty]="error.hasControlErrors(description)"
+          />
+        </div>
+      </div>
+
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-3">
+          <app-error-msg [control]="sendDate" label="Envio"></app-error-msg>
+          <p-calendar
+            name="sendDate"
+            appendTo="body"
+            [inline]="false"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            formControlName="sendDate"
+            [selectOtherMonths]="true"
+            [class.ng-dirty]="error.hasControlErrors(sendDate)"
+          >
+          </p-calendar>
+        </div>
+
+        <div class="col-3">
+          <app-error-msg [control]="returnDate" [required]="requiredReturnDate" label="Retorno"></app-error-msg>
+          <p-calendar
+            name="returnDate"
+            appendTo="body"
+            [inline]="false"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            formControlName="returnDate"
+            [selectOtherMonths]="true"
+            [class.ng-dirty]="error.hasControlErrors(returnDate)"
+          >
+          </p-calendar>
+        </div>
+
+        <div class="col-3">
+          <app-error-msg
+            [control]="warrantyStart"
+            [required]="requiredWarrantyStart"
+            label="Inicio Garantia"
+          ></app-error-msg>
+          <p-calendar
+            name="warrantyStart"
+            appendTo="body"
+            [inline]="false"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            formControlName="warrantyStart"
+            [selectOtherMonths]="true"
+            [class.ng-dirty]="error.hasControlErrors(warrantyStart)"
+          >
+          </p-calendar>
+        </div>
+
+        <div class="col-3">
+          <app-error-msg
+            label="Final Garantia"
+            [control]="warrantyEnd"
+            [required]="requiredWarrantyEnd"
+          ></app-error-msg>
+          <p-calendar
+            name="warrantyEnd"
+            appendTo="body"
+            [inline]="false"
+            [showIcon]="true"
+            dateFormat="dd/mm/yy"
+            class="p-calendar-sm"
+            [yearNavigator]="true"
+            [readonlyInput]="false"
+            [monthNavigator]="true"
+            formControlName="warrantyEnd"
+            [selectOtherMonths]="true"
+            [class.ng-dirty]="error.hasControlErrors(warrantyEnd)"
+          >
+          </p-calendar>
+        </div>
+      </div>
+    </p-tabPanel>
+
+    <p-tabPanel header="Observações" leftIcon="fa fa-book">
+      <div class="p-fluid grid" style="margin-bottom: 0em; margin-top: 0em">
+        <div class="col-12">
+          <app-error-msg [control]="note" [required]="false" label="Observação"></app-error-msg>
+          <textarea rows="5" cols="30" pInputTextarea formControlName="note"></textarea>
+        </div>
+      </div>
+    </p-tabPanel>
+  </p-tabView>
+
+  <br />
+  <br />
+  <br />
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-2 col-offset-8">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_MAINTENANCE_CARRIED_OUT_CREATE])"
+      ></button>
+    </div>
+
+    <div class="col-2">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

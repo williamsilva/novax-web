@@ -1,0 +1,27 @@
+<p-pickList
+  [dragdrop]="true"
+  [responsive]="true"
+  filterBy="description"
+  sourceHeader="Permissões"
+  [showSourceControls]="false"
+  [showTargetControls]="false"
+  [target]="permissionsInGroup"
+  [source]="permissionsAvailable"
+  targetHeader="Permissões Liberadas"
+  [sourceStyle]="{ height: '20rem' }"
+  [targetStyle]="{ height: '20rem' }"
+  sourceFilterPlaceholder="Buscar por Nome"
+  targetFilterPlaceholder="Buscar por Nome"
+  (onMoveToSource)="onMoveToPermissionInGroup($event)"
+  (onMoveToTarget)="onMoveToAvailablePermissions($event)"
+  (onMoveAllToSource)="onMoveAllToPermissionInGroup($event)"
+  (onMoveAllToTarget)="onMoveAllToAvailablePermissions($event)"
+>
+  <ng-template let-data pTemplate="item">
+    <div class="product-item">
+      <div class="product-list-detail">
+        <h5 class="p-mb-2">{{ data.description }}</h5>
+      </div>
+    </div>
+  </ng-template>
+</p-pickList>

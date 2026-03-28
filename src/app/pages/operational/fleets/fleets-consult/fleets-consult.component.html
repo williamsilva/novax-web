@@ -1,0 +1,260 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    dataKey="uuid"
+    [lazy]="true"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    selectionMode="multiple"
+    [(first)]="firstRecords"
+    [metaKeySelection]="true"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    (onRowSelect)="onRowSelect($event)"
+    [exportHeader]="'customExportHeader'"
+    [(selection)]="selectionMultipleTable"
+    (onRowUnselect)="onRowUnselect($event)"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Inserir"
+          (click)="openNew()"
+          icon="pi pi-plus-circle"
+          [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_FLEETS_CREATE])"
+        ></button>
+
+        <span class="p-input-icon-left ml-auto">
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="XLS"
+            icon="pi pi-file-excel"
+            (click)="exportExcel()"
+            tooltipPosition="bottom"
+            class="p-button-success mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            pTooltip="PDF"
+            icon="pi pi-file-pdf"
+            (click)="exportPdf()"
+            tooltipPosition="bottom"
+            class="p-button-warning mr-2"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-filter"
+            tooltipPosition="bottom"
+            pTooltip="Selection Only"
+            class="p-button-info ml-auto mr-8"
+            (click)="exportExcelSelectionOnly()"
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Clear"
+            (click)="clear(table)"
+            icon="pi pi-filter-slash"
+            class="p-button-outlined ml-auto"
+          ></button>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="departureDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Saída
+            <p-sortIcon field="departureDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              field="departureDate"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="arrivalDate" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Chegada
+            <p-sortIcon field="arrivalDate"></p-sortIcon>
+            <p-columnFilter
+              type="date"
+              display="menu"
+              class="ml-auto"
+              field="arrivalDate"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="departureTime" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Saída
+            <p-sortIcon field="departureTime"></p-sortIcon>
+          </div>
+        </th>
+
+        <th pSortableColumn="arrivalTime" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Retorno
+            <p-sortIcon field="arrivalTime"></p-sortIcon>
+          </div>
+        </th>
+
+        <th pSortableColumn="initialKm" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Km Inicial
+            <p-sortIcon field="initialKm"></p-sortIcon>
+            <p-columnFilter
+              type="numeric"
+              display="menu"
+              class="ml-auto"
+              field="initialKm"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="finalKm" style="width: 10rem">
+          <div class="flex p-jc-between p-ai-center">
+            Km Final
+            <p-sortIcon field="finalKm"></p-sortIcon>
+            <p-columnFilter
+              type="numeric"
+              display="menu"
+              class="ml-auto"
+              field="finalKm"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="route">
+          <div class="flex p-jc-between p-ai-center">
+            Rota
+            <p-sortIcon field="route"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="route"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="employee" style="width: 15rem">
+          <div class="flex p-jc-between p-ai-center">
+            Condutor
+            <p-sortIcon field="employee"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              field="employee"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect
+                  optionLabel="name"
+                  placeholder="Todos"
+                  [options]="employees"
+                  (onChange)="filter($event.value)"
+                >
+                  <ng-template let-option pTemplate="item">
+                    <div class="p-multiselect-representative-option">
+                      <span class="p-ml-1">{{ option.name }}</span>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template></p-columnFilter
+            >
+          </div>
+        </th>
+
+        <th style="width: 4.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td>{{ entry.departureDate | date : 'dd/MM/yyyy' }}</td>
+        <td>{{ entry.arrivalDate | date : 'dd/MM/yyyy' }}</td>
+
+        <td>{{ entry.departureTime }}</td>
+        <td>{{ entry.arrivalTime }}</td>
+
+        <td>{{ entry.initialKm | number }}</td>
+        <td>{{ entry.finalKm | number }}</td>
+        <td>{{ entry.route }}</td>
+        <td class="p-ellipsis">{{ entry.employee?.name | titlecase }}</td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_FLEETS_CHANGE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.id)"
+            [class]="!this.auth.hasAnyPermission([wsPermissions.ROLE_FLEETS_DELETE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

@@ -1,0 +1,98 @@
+<form autocomplete="off" [formGroup]="resourceForm" (ngSubmit)="submitForm()">
+  <div class="p-fluid grid">
+    <div class="col-2">
+      <app-error-msg [control]="senderMail" label="Notificar ao Trocar"></app-error-msg><br />
+      <p-selectButton
+        optionLabel="label"
+        optionValue="value"
+        [options]="stateOptions"
+        formControlName="senderMail"
+      ></p-selectButton>
+    </div>
+
+    <div class="col-2">
+      <app-error-msg [control]="daysToCancel" label="Dias para cancelar"></app-error-msg>
+      <p-inputNumber
+        [min]="1"
+        [max]="365"
+        suffix=" dias"
+        [showButtons]="true"
+        inputId="daysToCancel"
+        spinnerMode="horizontal"
+        buttonLayout="horizontal"
+        formControlName="daysToCancel"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        decrementButtonClass="p-button-danger"
+        incrementButtonClass="p-button-success"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-2">
+      <app-error-msg [control]="daysToExpire" label="Dias para expirar"></app-error-msg>
+      <p-inputNumber
+        [min]="1"
+        [max]="365"
+        suffix=" dias"
+        [showButtons]="true"
+        inputId="daysToExpire"
+        spinnerMode="horizontal"
+        buttonLayout="horizontal"
+        formControlName="daysToExpire"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        decrementButtonClass="p-button-danger"
+        incrementButtonClass="p-button-success"
+      ></p-inputNumber>
+    </div>
+
+    <div class="col-2">
+      <app-error-msg [control]="numberPendingVouchers" label="Número Vouchers"></app-error-msg>
+      <p-inputNumber
+        [min]="1"
+        [max]="365"
+        [showButtons]="true"
+        spinnerMode="horizontal"
+        buttonLayout="horizontal"
+        inputId="numberPendingVouchers"
+        incrementButtonIcon="pi pi-plus"
+        decrementButtonIcon="pi pi-minus"
+        decrementButtonClass="p-button-danger"
+        formControlName="numberPendingVouchers"
+        incrementButtonClass="p-button-success"
+      ></p-inputNumber>
+    </div>
+  </div>
+
+  <div class="p-fluid grid">
+    <div class="col-12">
+      <app-error-msg [control]="emailBody" label="Texto notificação"></app-error-msg>
+      <p-editor formControlName="emailBody" [style]="{ height: '200px' }"></p-editor>
+    </div>
+  </div>
+
+  <div class="p-fluid grid" style="margin-bottom: -1em; margin-top: 0%">
+    <div class="col-1 col-offset-10">
+      <button
+        pButton
+        type="submit"
+        label="Salvar"
+        [loading]="loading"
+        class="ui-button-success"
+        style="display: inline-block"
+        [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_CONFIG_CHANGE])"
+      ></button>
+    </div>
+
+    <div class="col-1">
+      <button
+        pButton
+        type="button"
+        label="Cancelar"
+        (click)="reset()"
+        class="p-button-secondary"
+        style="display: inline-block"
+      ></button>
+    </div>
+  </div>
+</form>

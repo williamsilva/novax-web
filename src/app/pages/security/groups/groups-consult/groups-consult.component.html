@@ -1,0 +1,155 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    dataKey="id"
+    [lazy]="true"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    selectionMode="single"
+    [(first)]="firstRecords"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    [(selection)]="selectionSingleTable"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="caption">
+      <div class="flex">
+        <button
+          pButton
+          pRipple
+          type="button"
+          label="Inserir"
+          (click)="openNew()"
+          icon="pi pi-plus-circle"
+          [disabled]="!auth.hasAnyPermission([wsPermissions.ROLE_GROUPS_CREATE])"
+        ></button>
+
+        <span class="p-input-icon-left ml-auto">
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-plus"
+            label="Usuários"
+            class="p-button-success"
+            (click)="openPropertiesUsers()"
+            [disabled]="
+              !selectionSingleTable ||
+              objectIsEmpty(selectionSingleTable) ||
+              !auth.hasAnyPermission([wsPermissions.ROLE_GROUP_MANAGEMENT_USER])
+            "
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            icon="pi pi-plus"
+            label="Permissões"
+            style="margin: 0 1em"
+            class="p-button-warning"
+            (click)="openPropertiesPermissions()"
+            [disabled]="
+              !selectionSingleTable ||
+              objectIsEmpty(selectionSingleTable) ||
+              !auth.hasAnyPermission([wsPermissions.ROLE_GROUP_MANAGEMENT_PERMISSION])
+            "
+          ></button>
+
+          <button
+            pButton
+            pRipple
+            type="button"
+            label="Clear"
+            (click)="clear(table)"
+            icon="pi pi-filter-slash"
+            class="p-button-outlined ml-auto"
+          ></button>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        <th pSortableColumn="name">
+          <div class="flex p-jc-between p-ai-center">
+            Nome
+            <p-sortIcon field="name"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="name"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="description">
+          <div class="flex p-jc-between p-ai-center">
+            Descrição
+            <p-sortIcon field="description"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="description"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            >
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 4.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td class="p-ellipsis">{{ entry.name | uppercase }}</td>
+        <td class="p-ellipsis">{{ entry.description | titlecase }}</td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_GROUPS_CHANGE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.id)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_GROUPS_DELETE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>

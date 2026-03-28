@@ -1,0 +1,26 @@
+<p-toast key="center" position="top-center"></p-toast>
+<p-toast></p-toast>
+<router-outlet></router-outlet>
+
+<p-confirmDialog
+  header="Confirmação"
+  icon="pi pi-question-circle"
+  #confirmation
+>
+  <p-footer>
+    <button
+      pButton
+      label="Sim"
+      type="button"
+      icon="fa fa-fw fa-check"
+      (click)="confirmation.accept()"
+    ></button>
+    <button
+      pButton
+      label="Não"
+      type="button"
+      icon="fa fa-fw fa-times"
+      (click)="confirmation.reject()"
+    ></button>
+  </p-footer>
+</p-confirmDialog>

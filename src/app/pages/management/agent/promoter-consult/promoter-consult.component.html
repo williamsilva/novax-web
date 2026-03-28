@@ -1,0 +1,244 @@
+<div style="padding: 0 0 0 0rem">
+  <p-table
+    #table
+    dataKey="id"
+    [lazy]="true"
+    [rowHover]="true"
+    [filterDelay]="0"
+    [responsive]="true"
+    [value]="resources"
+    [loading]="loading"
+    sortMode="multiple"
+    selectionMode="multiple"
+    [(first)]="firstRecords"
+    [metaKeySelection]="true"
+    [rows]="itemsPerPageDefault"
+    [totalRecords]="totalRecords"
+    [showCurrentPageReport]="true"
+    (onRowSelect)="onRowSelect($event)"
+    [exportHeader]="'customExportHeader'"
+    [(selection)]="selectionMultipleTable"
+    (onRowUnselect)="onRowUnselect($event)"
+    (onLazyLoad)="whenSwitchingPage($event)"
+    [rowsPerPageOptions]="rowsPerPageOptions"
+    [paginator]="totalRecords > 0 ? true : false"
+    [currentPageReportTemplate]="currentPageReportTemplate()"
+    styleClass="p-datatable-customers p-datatable-gridlines p-datatable-sm"
+  >
+    <ng-template pTemplate="header">
+      <tr>
+        <th style="width: 10rem" pSortableColumn="code">
+          <div class="flex p-jc-between p-ai-center">
+            Código
+            <p-sortIcon field="code"></p-sortIcon>
+            <p-columnFilter
+              field="code"
+              type="numeric"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [useGrouping]="false"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="name">
+          <div class="flex p-jc-between p-ai-center">
+            Nome
+            <p-sortIcon field="name"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              field="name"
+              display="menu"
+              class="ml-auto"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 10rem" pSortableColumn="typePerson">
+          <div class="flex p-jc-between p-ai-center">
+            Pessoa
+            <p-sortIcon field="typePerson"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              field="typePerson"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="typePersonEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="
+                        'customer-badge status-' + hasClassStyle.typePerson(keyValueTypePerson.getValue(option.value))
+                      "
+                    >
+                      {{ option.label }}
+                    </span>
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 10rem" pSortableColumn="statusPromoter">
+          <div class="flex p-jc-between p-ai-center">
+            Status
+            <p-sortIcon field="statusPromoter"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              field="statusPromoter"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect placeholder="Todos" [options]="statusEnum" (onChange)="filter($event.value)">
+                  <ng-template let-option pTemplate="item">
+                    <span
+                      [class]="'customer-badge status-' + hasClassStyle.status(keyValueStatus.getValue(option.value))"
+                      >{{ option.label }}</span
+                    >
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template>
+            </p-columnFilter>
+          </div>
+        </th>
+
+        <th style="width: 12rem" pSortableColumn="document">
+          <div class="flex p-jc-between p-ai-center">
+            Documento
+            <p-sortIcon field="document"></p-sortIcon>
+            <p-columnFilter
+              type="text"
+              display="menu"
+              class="ml-auto"
+              field="document"
+              matchMode="contains"
+              [showOperator]="false"
+              [showAddButton]="false"
+            ></p-columnFilter>
+          </div>
+        </th>
+
+        <th pSortableColumn="createdBy" style="width: 13rem">
+          <div class="flex p-jc-between p-ai-center">
+            Cadastro
+            <p-sortIcon field="createdBy"></p-sortIcon>
+            <p-columnFilter
+              display="menu"
+              matchMode="in"
+              class="ml-auto"
+              field="createdBy"
+              [showOperator]="false"
+              [showAddButton]="false"
+              [showMatchModes]="false"
+            >
+              <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+                <p-multiSelect
+                  [options]="users"
+                  optionLabel="name"
+                  placeholder="Todos"
+                  (onChange)="filter($event.value)"
+                >
+                  <ng-template let-option pTemplate="item">
+                    <div class="p-multiselect-representative-option">
+                      <span class="p-ml-1">{{ option.name }}</span>
+                    </div>
+                  </ng-template>
+                </p-multiSelect>
+              </ng-template></p-columnFilter
+            >
+          </div>
+        </th>
+
+        <th style="width: 5.5rem"></th>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-entry>
+      <tr [pSelectableRow]="entry">
+        <td class="text-center">{{ entry.code }}</td>
+        <td class="p-ellipsis">{{ entry.name }}</td>
+
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.typePerson(entry.typePerson)">{{
+            setDescription.typePerson(entry.typePerson)
+          }}</span>
+        </td>
+
+        <td style="text-align: center">
+          <span [class]="'customer-badge status-' + hasClassStyle.status(entry.statusPromoter)">{{
+            setDescription.status(entry.statusPromoter)
+          }}</span>
+        </td>
+
+        <td>{{ entry.document | maskDocument }}</td>
+        <td class="p-ellipsis">{{ entry.createdBy?.name | titlecase }}</td>
+
+        <td class="text-center">
+          <a
+            pTooltip="Dasativar"
+            tooltipPosition="top"
+            (click)="inactivateHandler(entry.id)"
+            [hidden]="
+              entry.statusPromoter === getValueKeyStatusByEnum(StatusEnum.Blocked) ||
+              entry.statusPromoter === getValueKeyStatusByEnum(StatusEnum.Inactive)
+            "
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_PROMOTERS_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi pi-shield"></i>
+          </a>
+
+          <a
+            pTooltip="Ativar"
+            tooltipPosition="top"
+            (click)="activateHandler(entry.id)"
+            [hidden]="entry.statusPromoter === getValueKeyStatusByEnum(StatusEnum.Active)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_PROMOTERS_ACTIVE_OR_INACTIVE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi pi-check-circle"></i>
+          </a>
+
+          <a
+            pTooltip="Editar"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="editResource(entry)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_CHANGE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi true-icon pi-user-edit"></i>
+          </a>
+
+          <a
+            pTooltip="Excluir"
+            tooltipPosition="top"
+            style="padding: 0 0 0 0.5rem"
+            (click)="deleteResource(entry.id)"
+            [class]="!auth.hasAnyPermission([wsPermissions.ROLE_AGENTS_DELETE]) ? 'p-disabled' : ''"
+          >
+            <i class="pi false-icon pi-times-circle"></i>
+          </a>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td colspan="10">Não há dados para ser exibido!</td>
+      </tr>
+    </ng-template>
+  </p-table>
+</div>
