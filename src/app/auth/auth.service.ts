@@ -13,8 +13,8 @@ import { wsPermissions } from '../models';
 export class AuthService {
   jwtPayload: any;
   clientId = environment.clientId;
-  oauthUrl = environment.oauthUrl;
-  authProxyUrl = environment.authProxyUrl;
+  clientSecret = environment.clientSecret;
+  apiUrl = `${environment.apiUrl}/oauth2`;
 
   constructor(private http: HttpClient, private jwtHelper: JwtHelperService) {
     this.loadToken();
@@ -22,7 +22,7 @@ export class AuthService {
 
   public async logout(): Promise<any> {
     try {
-      const headers = this.formHeaders();
+      const headers = this.headers();
       const refreshToken = this.getRefreshToken();
 
       if (!refreshToken) {
@@ -32,7 +32,7 @@ export class AuthService {
 
       const payload = new HttpParams().append('token', refreshToken);
 
-      await this.http.post<any>(`${this.authProxyUrl}/revoke`, payload, { headers }).toPromise();
+      await this.http.post<any>(`${this.apiUrl}/revoke`, payload, { headers }).toPromise();
 
       this.cleanAccessToken();
       this.login();
@@ -70,7 +70,7 @@ export class AuthService {
       'code_challenge=' + codeChallenge,
       'code_challenge_method=' + challengeMethod,
     ];
-    window.location.href = `${this.oauthUrl}/authorize?${params.join('&')}`;
+    window.location.href = `${this.apiUrl}/authorize` + '?' + params.join('&');
   }
 
   public async getNewAccessTokenWithCode(code: string, state: string): Promise<any> {
@@ -89,10 +89,10 @@ export class AuthService {
       .append('grant_type', 'authorization_code')
       .append('redirect_uri', environment.oauthCallbackUrl);
 
-    const headers = this.formHeaders();
+    const headers = this.headers();
 
     try {
-      const res = await this.http.post<any>(`${this.authProxyUrl}/token`, payload, { headers }).toPromise();
+      const res = await this.http.post<any>(`${this.apiUrl}/token`, payload, { headers }).toPromise();
       this.storeToken(res['access_token']);
       this.storeRefreshToken(res['refresh_token']);
 
@@ -116,9 +116,9 @@ export class AuthService {
         .append('grant_type', 'refresh_token')
         .append('refresh_token', refreshToken);
 
-      const headers = this.formHeaders();
+      const headers = this.headers();
 
-      const res = await this.http.post<any>(`${this.authProxyUrl}/token`, payload, { headers }).toPromise();
+      const res = await this.http.post<any>(`${this.apiUrl}/token`, payload, { headers }).toPromise();
       this.storeToken(res['access_token']);
       this.storeRefreshToken(res['refresh_token']);
     } catch (err) {
@@ -146,7 +146,7 @@ export class AuthService {
   }
 
   public youHavePermission(permission: string) {
-    const authorities = this.jwtPayload?.authorities;
+    const authorities = this.jwtPayload.authorities;
     if (authorities) {
       return (this.jwtPayload && authorities.includes(wsPermissions.ROLE_MASTER)) || authorities.includes(permission);
     }
@@ -162,8 +162,14 @@ export class AuthService {
     return false;
   }
 
-  private formHeaders() {
-    return new HttpHeaders().append('Content-Type', 'application/x-www-form-urlencoded');
+  public basicAuth() {
+    return `Basic ${btoa(`${this.clientId}:${this.clientSecret}`)}`;
+  }
+
+  private headers() {
+    return new HttpHeaders()
+      .append('Content-Type', 'application/x-www-form-urlencoded')
+      .append('Authorization', this.basicAuth());
   }
 
   private storeToken(token: string) {
@@ -185,6 +191,7 @@ export class AuthService {
 
   private generateRandomString(size: number) {
     let result = '';
+    //Chars são URL safe
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     for (let i = 0; i < size; i++) {
       result += chars.charAt(Math.floor(Math.random() * chars.length));

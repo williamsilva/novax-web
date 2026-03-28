@@ -13,8 +13,8 @@ export class JwtHttpInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     if (
-      !request.url.includes('/api/auth/token') &&
-      !request.url.includes('/api/auth/revoke') &&
+      !request.url.includes('/oauth2/token') &&
+      !request.url.includes('/oauth2/revoke') &&
       this.auth.isAccessTokenInvalid()
     ) {
       return from(this.auth.renewAccessToken()).pipe(
@@ -32,6 +32,14 @@ export class JwtHttpInterceptor implements HttpInterceptor {
           return next.handle(request);
         })
       );
+    }
+
+    if (request.url.includes('/oauth2/revoke')) {
+      request = request.clone({
+        setHeaders: {
+          Authorization: this.auth.basicAuth(),
+        },
+      });
     }
 
     return next.handle(request);

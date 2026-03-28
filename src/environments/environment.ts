@@ -5,12 +5,11 @@
 export const environment = {
   production: false,
   clientId: 'novax@angular',
+  clientSecret: 'WsAuth@2022',
   apiUrl: 'http://127.0.0.1:8080',
-  oauthUrl: 'http://127.0.0.1:8080/oauth2',
-  authProxyUrl: '/api/auth',
 
   tokenAllowedDomains: [new RegExp('127.0.0.1:8080')],
-  tokenDisallowedRoutes: [new RegExp('/api/auth/token'), new RegExp('/api/auth/revoke')],
+  tokenDisallowedRoutes: [new RegExp('/oauth2/token')],
   oauthCallbackUrl: 'http://127.0.0.1:9080/authorized',
 };
 
