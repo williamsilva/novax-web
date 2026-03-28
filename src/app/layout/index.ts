@@ -5,4 +5,3 @@ export * from './topbar';
 export * from './menuitem';
 export * from './rightpanel';
 export * from './menu.service';
-

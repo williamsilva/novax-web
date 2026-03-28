@@ -10,9 +10,9 @@ import { ConfigComponent } from '../layout/config/config.component';
 import { RightpanelComponent } from '../layout/rightpanel/rightpanel.component';
 
 @Component({
+  standalone: true,
   selector: 'app-pages',
   templateUrl: './pages.component.html',
-  standalone: true,
   imports: [NgClass, RouterOutlet, MenuComponent, TopBarComponent, ConfigComponent, RightpanelComponent],
 })
 export class PagesComponent {
